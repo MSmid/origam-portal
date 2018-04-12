@@ -16,7 +16,7 @@ Route::get('/', function () {
 });
 
 
-Route::group(['prefix' => 'admin'], function () {
+Route::group(['prefix' => 'portal'], function () {
     Voyager::routes();
     Route::get('test', ['uses' => 'Voyager\MovieController@index']);
 });
