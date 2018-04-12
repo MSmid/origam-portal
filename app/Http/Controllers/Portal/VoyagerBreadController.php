@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Voyager;
+namespace App\Http\Controllers\Portal;
 
 use TCG\Voyager\Http\Controllers\VoyagerBreadController as BaseVoyagerBreadController;
 
