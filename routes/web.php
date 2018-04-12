@@ -18,6 +18,7 @@ Route::get('/', function () {
 
 Route::group(['prefix' => 'portal'], function () {
     Voyager::routes();
+    Route::get('login', ['uses' => 'Portal\LoginController@login', 'as' => 'login']);
     Route::post('login', ['uses' => 'Portal\LoginController@postLogin', 'as' => 'postLogin']);
     Route::get('test', ['uses' => 'Portal\MovieController@index']);
 });

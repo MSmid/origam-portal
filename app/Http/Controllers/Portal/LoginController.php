@@ -14,6 +14,15 @@ use Symfony\Component\HttpFoundation\Cookie;
 class LoginController extends BaseVoyagerAuthController
 {
 
+  public function login()
+  {
+      if (Auth::user()) {
+          return redirect()->route('voyager.dashboard');
+      }
+
+      return view('login');
+  }
+
   public function postLogin(Request $request)
   {
       $this->validateLogin($request);
@@ -30,7 +39,9 @@ class LoginController extends BaseVoyagerAuthController
         $credentials = $this->credentials($request);
 
         if ($this->guard()->attempt($credentials, $request->has('remember'))) {
-            return $this->sendLoginResponse($request, $cookie);
+          return $this->sendLoginResponse($request, $cookie);
+        } else {
+
         }
       } else {
         $this->incrementLoginAttempts($request);
@@ -41,7 +52,7 @@ class LoginController extends BaseVoyagerAuthController
 
   public function origamLogin(Request $request)
   {
-    $username = $request->input('email');
+    $username = $request->input($this->username());
     $password = $request->input('password');
 
     $client = new Client();
@@ -67,6 +78,16 @@ class LoginController extends BaseVoyagerAuthController
 
       return $this->authenticated($request, $this->guard()->user())
               ?: redirect()->intended($this->redirectPath())->withCookie($cookie);
+  }
+
+  public function credentials(Request $request)
+  {
+    return $request->only($this->username(), 'password');
+  }
+
+  public function username()
+  {
+      return 'login';
   }
 
   public function logout(Request $request)
