@@ -37,9 +37,6 @@ class LoginController extends BaseVoyagerAuthController
         return $this->sendFailedLoginResponse($request);
       }
 
-
-      // return redirect('portal')->withCookie($cookie);
-
   }
 
   public function origamLogin(Request $request)
@@ -49,7 +46,7 @@ class LoginController extends BaseVoyagerAuthController
 
     $client = new Client();
 
-    $res = $client->request('GET', 'http://localhost/4isp/AjaxLogin', [
+    $res = $client->request('GET', env('ORIGAM_BASE_URL') . '/AjaxLogin', [
         'query' => [
             'username' => $username,
             'password' => $password,
@@ -57,7 +54,8 @@ class LoginController extends BaseVoyagerAuthController
     ]);
 
     if (strlen($res->getHeaders()["Set-Cookie"][0]) > 52) {
-      return cookie('4isp', $res->getHeaders()["Set-Cookie"][0]);
+      $lifetime = 60 * 24 * 365 * 2; //function requires lifetime in minutes, set to two years
+      return cookie('4isp', $res->getHeaders()["Set-Cookie"][0], $lifetime);
     }
   }
 
@@ -69,5 +67,14 @@ class LoginController extends BaseVoyagerAuthController
 
       return $this->authenticated($request, $this->guard()->user())
               ?: redirect()->intended($this->redirectPath())->withCookie($cookie);
+  }
+
+  public function logout(Request $request)
+  {
+      $this->guard()->logout();
+
+      $request->session()->invalidate();
+
+      return redirect('/');
   }
 }
