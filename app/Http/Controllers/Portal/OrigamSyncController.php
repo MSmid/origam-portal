@@ -1,23 +1,29 @@
 <?php
 
-//namespace App\Http\Controllers;
 namespace App\Http\Controllers\Portal;
 
-use TCG\Voyager\Http\Controllers\VoyagerBreadController as BaseVoyagerBreadController;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use TCG\Voyager\Database\Schema\SchemaManager;
+use TCG\Voyager\Events\BreadDataAdded;
+use TCG\Voyager\Events\BreadDataDeleted;
+use TCG\Voyager\Events\BreadDataUpdated;
+use TCG\Voyager\Events\BreadImagesDeleted;
 use TCG\Voyager\Facades\Voyager;
+use TCG\Voyager\Http\Controllers\Traits\BreadRelationshipParser;
 
-class MovieController extends BaseVoyagerBreadController
+class OrigamSyncController extends SynchronizationBreadController
 {
+
   public function index(Request $request)
   {
       // GET THE SLUG, ex. 'posts', 'pages', etc.
-      // $slug = $this->getSlug($request);
-      $slug = 'movies';
+      $slug = $this->getSlug($request);
 
       // GET THE DataType based on the slug
       $dataType = Voyager::model('DataType')->where('slug', '=', $slug)->first();
+      // dd($dataType);
 
       // Check permission
       $this->authorize('browse', app($dataType->model_name));
@@ -56,6 +62,8 @@ class MovieController extends BaseVoyagerBreadController
           } else {
               $dataTypeContent = call_user_func([$query->with($relationships)->orderBy($model->getKeyName(), 'DESC'), $getter]);
           }
+          //Filter by data source type
+          $dataTypeContent = call_user_func([$query->where('data_source_type_id', '=', 1), $getter]);
 
           // Replace relationships' keys for labels and create READ links if a slug is provided.
           $dataTypeContent = $this->resolveRelations($dataTypeContent, $dataType);
@@ -73,11 +81,13 @@ class MovieController extends BaseVoyagerBreadController
       // Check if server side pagination is enabled
       $isServerSide = isset($dataType->server_side) && $dataType->server_side;
 
-      $view = 'voyager::bread.browse';
+      // $view = 'voyager::bread.browse';
+      //
+      // if (view()->exists("voyager::$slug.browse")) {
+      //     $view = "voyager::$slug.browse";
+      // }
 
-      if (view()->exists("voyager::$slug.browse")) {
-          $view = "voyager::$slug.browse";
-      }
+      $view = 'sync.browse';
 
       return Voyager::view($view, compact(
           'dataType',

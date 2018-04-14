@@ -1,0 +1,14 @@
+.btn {
+  &-failed {
+    background: $brand-danger;
+  }
+  &-none {
+    background: $brand-inactive;
+  }
+  &-success {
+    background: $brand-success;
+  }
+  &-in-progress {
+    background: $brand-primary;
+  }
+}

@@ -43277,7 +43277,7 @@ if (false) {
 /* 43 */
 /***/ (function(module, exports) {
 
-// removed by extract-text-webpack-plugin
+throw new Error("Module build failed: ModuleBuildError: Module build failed: \r\n    background: $brand-danger;\r\n               ^\r\n      Undefined variable: \"$brand-danger\".\r\n      in C:\\GIT\\origam-portal\\resources\\assets\\sass\\master.scss (line 3, column 17)\n    at runLoaders (C:\\GIT\\origam-portal\\node_modules\\webpack\\lib\\NormalModule.js:195:19)\n    at C:\\GIT\\origam-portal\\node_modules\\loader-runner\\lib\\LoaderRunner.js:364:11\n    at C:\\GIT\\origam-portal\\node_modules\\loader-runner\\lib\\LoaderRunner.js:230:18\n    at context.callback (C:\\GIT\\origam-portal\\node_modules\\loader-runner\\lib\\LoaderRunner.js:111:13)\n    at Object.asyncSassJobQueue.push [as callback] (C:\\GIT\\origam-portal\\node_modules\\sass-loader\\lib\\loader.js:55:13)\n    at Object.done [as callback] (C:\\GIT\\origam-portal\\node_modules\\neo-async\\async.js:7974:18)\n    at options.error (C:\\GIT\\origam-portal\\node_modules\\node-sass\\lib\\index.js:294:32)");
 
 /***/ })
 /******/ ]);

@@ -9,6 +9,9 @@ return [
     ],
 
     'generic' => [
+        'sync_status' => 'Sync Status',
+        'status' => 'Status',                  
+
         'action'                 => 'Action',
         'actions'                => 'Actions',
         'add'                    => 'Add',
@@ -437,6 +440,10 @@ return [
 
     'seeders' => [
         'data_rows'  => [
+            'url'              => 'URL',
+            'last_sync_at'     => 'Last Sync At',
+            'data_source_type' => 'Data Source Type',
+
             'author'           => 'Author',
             'avatar'           => 'Avatar',
             'body'             => 'Body',
@@ -464,6 +471,10 @@ return [
             'updated_at'       => 'Updated At',
         ],
         'data_types' => [
+            'data_source'     => [
+                'singular' => 'Data Source',
+                'plural'   => 'Data Sources',
+            ],
             'category' => [
                 'singular' => 'Category',
                 'plural'   => 'Categories',
@@ -502,7 +513,9 @@ return [
             'settings'     => 'Settings',
             'tools'        => 'Tools',
             'users'        => 'Users',
-            'sync'         => 'Synchronization'
+
+            'sync'         => 'Synchronization',
+            'web_services' => 'Web Services'
         ],
         'roles'      => [
             'admin' => 'Administrator',

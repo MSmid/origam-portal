@@ -32,10 +32,12 @@ class PortalMenuItemsTableSeeder extends Seeder
                     'order'      => 10,
                 ])->save();
             }
+
             $OrigamSyncMenuItem = MenuItem::firstOrNew([
                 'menu_id' => $menu->id,
                 'title'   => 'Origam',
-                'url'     => 'voyager.synchronization.index',
+                'url'     => '',
+                'route'      => 'portal.synchronization.origam.index',
             ]);
             if (!$OrigamSyncMenuItem->exists) {
                 $OrigamSyncMenuItem->fill([
@@ -44,6 +46,22 @@ class PortalMenuItemsTableSeeder extends Seeder
                     'color'      => null,
                     'parent_id'  => $syncMenuItem->id,
                     'order'      => 1,
+                ])->save();
+            }
+
+            $OrigamSyncMenuItem = MenuItem::firstOrNew([
+                'menu_id' => $menu->id,
+                'title'   => __('origam_portal.seeders.menu_items.web_services'),
+                'url'     => '',
+                'route'      => 'portal.synchronization.services.index',
+            ]);
+            if (!$OrigamSyncMenuItem->exists) {
+                $OrigamSyncMenuItem->fill([
+                    'target'     => '_self',
+                    'icon_class' => 'voyager-data',
+                    'color'      => null,
+                    'parent_id'  => $syncMenuItem->id,
+                    'order'      => 2,
                 ])->save();
             }
         }

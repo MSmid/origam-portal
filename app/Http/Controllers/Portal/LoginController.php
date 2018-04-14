@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Cookie;
 
 class LoginController extends BaseVoyagerAuthController
 {
+  use AuthenticatesUsers;
 
   public function login()
   {
@@ -40,14 +41,13 @@ class LoginController extends BaseVoyagerAuthController
 
         if ($this->guard()->attempt($credentials, $request->has('remember'))) {
           return $this->sendLoginResponse($request, $cookie);
-        } else {
-
         }
-      } else {
-        $this->incrementLoginAttempts($request);
+        //Password is okay for Origam but not for Laravel Auth
         return $this->sendFailedLoginResponse($request);
       }
 
+      $this->incrementLoginAttempts($request);
+      return $this->sendFailedLoginResponse($request);
   }
 
   public function origamLogin(Request $request)

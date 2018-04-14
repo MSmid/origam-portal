@@ -2,3 +2,19 @@
   height: auto;
 }
 
+.btn-failed {
+  background: #FA2A00;
+}
+
+.btn-none {
+  background: #aaa;
+}
+
+.btn-success {
+  background: #2ecc71;
+}
+
+.btn-in-progress {
+  background: #22A7F0;
+}
+

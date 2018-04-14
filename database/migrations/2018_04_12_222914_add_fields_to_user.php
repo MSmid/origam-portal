@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class User extends Migration
+class AddFieldsToUser extends Migration
 {
   /**
    * Run the migrations.
@@ -15,7 +15,7 @@ class User extends Migration
           $table->string('first_name')->after('name');
           $table->string('last_name')->after('first_name');
           $table->string('login')->after('email');
-          $table->string('uuid')->after('updated_at');
+          $table->uuid('uuid')->after('updated_at');
       });
   }
 
