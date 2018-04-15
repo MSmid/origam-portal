@@ -22,6 +22,7 @@ Route::group(['prefix' => config('origam_portal.portal.domain')], function () {
     Route::post('login', ['uses' => 'Portal\LoginController@postLogin', 'as' => 'postLogin']);
     // Route::post('logout', ['uses' => 'Portal\VoyagerController@logout',  'as' => 'logout']);
 
+    // Synchronization
     Route::group(['as' => 'portal.'], function () {
       Route::group([
         'as' => 'synchronization.',
@@ -32,8 +33,9 @@ Route::group(['prefix' => config('origam_portal.portal.domain')], function () {
         });
         Route::get('origam', ['uses' => 'Portal\OrigamSyncController@index', 'as' => 'origam.index']);
         Route::get('services', ['uses' => 'Portal\WebServicesSyncController@index', 'as' => 'services.index']);
+        Route::get('{id}', ['uses' => 'Portal\SynchronizationBreadController@show', 'as' => 'show']);
+        Route::get('{id}/sync', ['uses' => 'Portal\SynchronizationDatabaseController@sync', 'as' => 'sync']);
       });
-
       // Route::resource('database', 'Portal\VoyagerDatabaseController');
 
     });

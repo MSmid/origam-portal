@@ -184,7 +184,7 @@ return [
     */
 
     // When a BREAD is added, create the Menu item using the BREAD properties.
-    'add_bread_menu_item' => true,
+    'add_bread_menu_item' => false,
 
     // When a BREAD is added, create the related Permission.
     'add_bread_permission' => true,
@@ -210,6 +210,7 @@ return [
 
     'additional_js' => [
         //'js/custom.js',
+        'js/app.js'
     ],
 
     'googlemaps' => [

@@ -196,8 +196,8 @@
                                                     <i class="voyager-eye"></i> <span class="hidden-xs hidden-sm">{{ __('voyager.generic.view') }}</span>
                                                 </a>
                                             @endcan
-                                            <a href="{{ route('voyager.database.create') }}" class="btn btn-success"><i class="voyager-plus"></i>
-                                                {{ __('voyager.database.create_new_table') }}
+                                            <a href="{{ route('portal.synchronization.sync', $data->{$data->getKeyName()}) }}" class="btn btn-success"><i class="voyager-plus"></i>
+                                                {{ __('origam_portal.database.create_new_sync') }}
                                             </a>
                                         </td>
                                     </tr>

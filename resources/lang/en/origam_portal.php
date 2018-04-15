@@ -10,7 +10,8 @@ return [
 
     'generic' => [
         'sync_status' => 'Sync Status',
-        'status' => 'Status',                  
+        'status' => 'Status',
+        'syncing' => 'Syncing',
 
         'action'                 => 'Action',
         'actions'                => 'Actions',
@@ -239,6 +240,7 @@ return [
     ],
 
     'database' => [
+        'create_new_sync' => 'Create Synchronization',
         'add_bread'                 => 'Add BREAD to this table',
         'add_new_column'            => 'Add New Column',
         'add_softdeletes'           => 'Add Soft Deletes',

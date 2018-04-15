@@ -86,7 +86,7 @@ class OrigamSyncController extends SynchronizationBreadController
       // if (view()->exists("voyager::$slug.browse")) {
       //     $view = "voyager::$slug.browse";
       // }
-
+      
       $view = 'sync.browse';
 
       return Voyager::view($view, compact(

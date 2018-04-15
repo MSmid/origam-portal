@@ -8,10 +8,6 @@ use TCG\Voyager\Http\Controllers\VoyagerBreadController as BaseVoyagerBreadContr
 class SynchronizationBreadController extends BaseVoyagerBreadController
 {
 
-    public function browseSyncLog() {
-
-    }
-
     public function getSlug(Request $request)
     {
         return 'data_sources';
