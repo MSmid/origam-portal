@@ -15,5 +15,6 @@ Broadcast::channel('App.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
 Broadcast::channel('datasource.{id}', function ($user, $id) {
+    dd($id);
     return true;
 });

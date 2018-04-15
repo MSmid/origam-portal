@@ -48,6 +48,8 @@ class ProcessSynchronization implements ShouldQueue
           }
         );
       $response = $promise->wait();
-      SynchronizationCompleted::dispatch($response, $ds->value('id'));
+
+      dd($response);
+      // event(new SynchronizationCompleted($response, $ds->value('id')));
     }
 }

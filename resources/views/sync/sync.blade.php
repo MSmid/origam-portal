@@ -4,22 +4,50 @@
 
 @section('page_header')
     <h1 class="page-title">
-        <i class="voyager-data"></i> {{ $data->name }}
+        <i class="voyager-data"></i> {{ $pageData->name }}
     </h1>
-    <i>{{  $data->url }}<i/>
-    <div class="progress">
-      <div class="progress-bar progress-bar-striped active progress-bar-info" role="progressbar" style="width: 100%"></div>
-    </div>
+    <i>{{  $pageData->url }}<i/>
+    <form action="{{ route('portal.synchronization.sync', $pageData->id) }}" method="POST" id="check-action" style="display: inline-block">
+        {{ csrf_field() }}
+        <button type="submit" class="btn btn-success">
+            <span>{{ __('origam_portal.generic.check') }}</span>
+        </button>
+    </form>
+    {{-- AJAX --}}
+    {{-- <button type="submit" id="check-action" class="btn btn-success">
+        <span>{{ __('origam_portal.generic.check') }}</span>
+    </button> --}}
 @stop
 
 @section('content')
 
     <div class="page-content container-fluid">
         @include('voyager::alerts')
-        {{-- <div class="row">
-            <div class="col-md-12">
+        <div class="progress hidden">
+          <div class="progress-bar progress-bar-striped active progress-bar-info" role="progressbar" style="width: 100%"></div>
+        </div>
 
-                <table class="table table-striped database-tables">
+        <div class="row">
+            <div class="col-md-12">
+              @if ($data)
+                @if(isset($data['data']))
+                  <h2>Data</h2>
+                  <div>
+                    {{ $data['data'] }}
+                  </div>
+                  <a href="{{ route('portal.synchronization.create', $pageData->id) }}" class="btn btn-success btn-add-new">
+                      <i class="voyager-plus"></i> <span>{{ __('voyager.generic.add_new') }}</span>
+                  </a>
+                @endif
+                @if(isset($data['error']))
+                  <h2>Error</h2>
+                  <div>
+                    {{ $data['error'] }}
+                  </div>
+                @endif
+              @endif
+
+                {{-- <table class="table table-striped database-tables">
                     <thead>
                         <tr>
                             <th>{{ __('voyager.database.table_name') }}</th>
@@ -86,8 +114,8 @@
                     </tr>
                 @endforeach
                 </table>
-            </div>
-        </div> --}}
+            </div> --}}
+        </div>
     </div>
 
     <div class="modal modal-danger fade" tabindex="-1" id="delete_builder_modal" role="dialog">
@@ -174,24 +202,41 @@
 
 @stop
 
-<script>
-
-
-    // var btn = document.querySelector('button[type="submit"]');
-    // var form = document.forms[0];
-    // var email = document.querySelector('[name="email"]');
-    // var password = document.querySelector('[name="password"]');
-    // btn.addEventListener('click', function(ev){
-    //     if (form.checkValidity()) {
-    //         btn.querySelector('.signingin').className = 'signingin';
-    //         btn.querySelector('.signin').className = 'signin hidden';
-    //     } else {
-    //         ev.preventDefault();
-    //     }
-    // });
-</script>
-
 @section('javascript')
+
+    <script>
+        var form = document.querySelector('#check-action');
+        var btn = form.querySelector('button[type="submit"]');
+        btn.addEventListener('click', function(ev){
+            if (form.checkValidity()) {
+                form.className = 'hidden';
+                document.querySelector('.progress.hidden').className = 'progress';
+            } else {
+                ev.preventDefault();
+            }
+        });
+        //AJAX
+        // var btn = document.querySelector('buttons#check-action');
+        // btn.addEventListener('click', function(ev){
+        //   ev.preventDefault();
+        //   btn.className = 'hidden';
+        //   document.querySelector('.progress.hidden').className = 'progress';
+        //   var token = $('meta[name="csrf-token"]').attr('content');
+        //   $.ajaxSetup({
+        //     headers: {
+        //       'X-CSRF-Token': token
+        //     }
+        //   });
+        //   $.ajax({
+        //     url: "{{route('portal.synchronization.sync', $pageData->id)}}",
+        //     type: "POST",
+        //     contentType: 'application/json; charset=utf-8',
+        //     data: {
+        //       "_token": token
+        //     }
+        //   });
+        // });
+    </script>
 
     <script>
 

@@ -29,12 +29,14 @@ Route::group(['prefix' => config('origam_portal.portal.domain')], function () {
         'prefix' => 'synchronization'
       ], function () {
         Route::get('/', function () {
-          return redirect()->route('voyager.dashboard');
+          return redirect('data_sources');
         });
         Route::get('origam', ['uses' => 'Portal\OrigamSyncController@index', 'as' => 'origam.index']);
         Route::get('services', ['uses' => 'Portal\WebServicesSyncController@index', 'as' => 'services.index']);
         Route::get('{id}', ['uses' => 'Portal\SynchronizationBreadController@show', 'as' => 'show']);
-        Route::get('{id}/sync', ['uses' => 'Portal\SynchronizationDatabaseController@sync', 'as' => 'sync']);
+        Route::get('{id}/sync', ['uses' => 'Portal\SynchronizationDatabaseController@showSync', 'as' => 'sync']);
+        Route::post('{id}/sync', ['uses' => 'Portal\SynchronizationDatabaseController@postSync', 'as' => 'postSync']);
+        Route::get('{id}/create', ['uses' => 'Portal\SynchronizationDatabaseController@create', 'as' => 'create']);
       });
       // Route::resource('database', 'Portal\VoyagerDatabaseController');
 

@@ -12,6 +12,7 @@ return [
         'sync_status' => 'Sync Status',
         'status' => 'Status',
         'syncing' => 'Syncing',
+        'check' => 'Check',
 
         'action'                 => 'Action',
         'actions'                => 'Actions',

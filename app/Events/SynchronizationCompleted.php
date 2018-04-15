@@ -8,9 +8,9 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 
-class SynchronizationCompleted implements ShouldBroadcast
+class SynchronizationCompleted implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -27,6 +27,7 @@ class SynchronizationCompleted implements ShouldBroadcast
     {
         $this->datasourceId = $datasourceId;
         $this->response = $response;
+        // dd($this);
     }
 
     /**
@@ -36,6 +37,6 @@ class SynchronizationCompleted implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('datasource.' . $this->datasourceId);
+        return new Channel('datasource.' . $this->datasourceId);
     }
 }

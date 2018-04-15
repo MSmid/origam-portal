@@ -27,36 +27,5 @@ use TCG\Voyager\Http\Controllers\VoyagerDatabaseController as BaseVoyagerDatabas
 
 class VoyagerDatabaseController extends BaseVoyagerDatabaseController
 {
-  public function index()
-  {
-      Voyager::canOrFail('browse_database');
-
-      $dataTypes = Voyager::model('DataType')->select('id', 'name', 'slug')->get()->keyBy('name')->toArray();
-
-      $tables = array_map(function ($table) use ($dataTypes) {
-          $table = [
-              'name'       => $table,
-              'slug'       => isset($dataTypes[$table]['slug']) ? $dataTypes[$table]['slug'] : null,
-              'dataTypeId' => isset($dataTypes[$table]['id']) ? $dataTypes[$table]['id'] : null,
-          ];
-
-          return (object) $table;
-      }, SchemaManager::listTableNames());
-
-      return Voyager::view('database.index')->with(compact('dataTypes', 'tables'));
-  }
-
-  /**
-   * Create database table.
-   *
-   * @return \Illuminate\Http\RedirectResponse
-   */
-  public function create()
-  {
-      Voyager::canOrFail('browse_database');
-
-      $db = $this->prepareDbManager('create');
-
-      return Voyager::view('database.edit-add', compact('db'));
-  }
+//
 }
