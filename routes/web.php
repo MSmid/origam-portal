@@ -36,7 +36,7 @@ Route::group(['prefix' => config('origam_portal.portal.domain')], function () {
         Route::get('{id}', ['uses' => 'Portal\SynchronizationBreadController@show', 'as' => 'show']);
         Route::get('{id}/sync', ['uses' => 'Portal\SynchronizationDatabaseController@showSync', 'as' => 'sync']);
         Route::post('{id}/sync', ['uses' => 'Portal\SynchronizationDatabaseController@postSync', 'as' => 'postSync']);
-        Route::get('{id}/create', ['uses' => 'Portal\SynchronizationDatabaseController@create', 'as' => 'create']);
+        Route::get('{id}/create', ['uses' => 'Portal\SynchronizationDatabaseController@createSync', 'as' => 'create']);
       });
       // Route::resource('database', 'Portal\VoyagerDatabaseController');
 

@@ -9,6 +9,8 @@ class DataSource extends Model
 
     protected $appends = ['status'];
 
+    protected $fillable = ['sync_data'];
+
     public function synchronizations() {
       return $this->hasMany(Synchronization::class);
     }

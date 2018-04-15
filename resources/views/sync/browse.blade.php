@@ -196,9 +196,16 @@
                                                     <i class="voyager-eye"></i> <span class="hidden-xs hidden-sm">{{ __('voyager.generic.view') }}</span>
                                                 </a>
                                             @endcan
-                                            <a href="{{ route('portal.synchronization.sync', $data->{$data->getKeyName()}) }}" class="btn btn-success"><i class="voyager-plus"></i>
-                                                {{ __('origam_portal.database.create_new_sync') }}
-                                            </a>
+                                            @if (!$data->is_synced)
+                                              <a href="{{ route('portal.synchronization.sync', $data->{$data->getKeyName()}) }}" class="btn btn-success"><i class="voyager-plus"></i>
+                                                  {{ __('origam_portal.database.create_new_sync') }}
+                                              </a>
+                                            @endif
+                                            @if ($data->is_synced)
+                                              <a href="{{ route('portal.synchronization.sync', $data->{$data->getKeyName()}) }}" class="btn btn-success"><i class="voyager-plus"></i>
+                                                  {{ __('origam_portal.generic.sync_now') }}
+                                              </a>
+                                            @endif
                                         </td>
                                     </tr>
                                     @endforeach

@@ -13,6 +13,7 @@ return [
         'status' => 'Status',
         'syncing' => 'Syncing',
         'check' => 'Check',
+        'sync_now' => 'Sync Now',
 
         'action'                 => 'Action',
         'actions'                => 'Actions',

@@ -35,17 +35,19 @@ class SynchronizationDatabaseController extends VoyagerDatabaseController
 
   public function postSync(Request $request, $id) {
     $url = DataSource::where('id', $id)->value('url');
-    $data = $this->sync($url);
+    $data = $this->sync($url, $id);
     return $this->renderView('sync.sync', $id, $data);
   }
 
-  public function sync($url) {
+  public function sync($url, $id) {
     $client = new Client();
     $path = env('ORIGAM_BASE_URL') . '/' . $url;
     $promise = $client->getAsync($path)->then(
-        function ($res) {
+        function ($res) use ($id) {
+          $rawData = $res->getBody()->getContents();
+          $this->storeSyncData($id, $rawData);
           return [
-            'data' => $res->getBody()->getContents()
+            'data' => $rawData
           ];
         },
         function($error) {
@@ -61,6 +63,22 @@ class SynchronizationDatabaseController extends VoyagerDatabaseController
   public function renderView($view, $id, $data) {
     $pageData = DataSource::query()->where('id', $id)->getQuery()->get()[0];
     return view($view, compact('pageData', 'data'));
+  }
+
+  public function storeSyncData($id, $rawData) {
+    $data = json_decode($rawData, true);
+    $data = $data['ROOT'];
+    foreach($data as $row => $value) {
+      if (count($value) > 0) {
+        $data[$row] = $value[0];
+        break;
+      }
+      $data = $data;
+      break;
+    }
+    $data = json_encode($data);
+    // dd($data);
+    DataSource::where('id', $id)->update(['sync_data' => $data]);
   }
 
   // public function index()
@@ -87,18 +105,19 @@ class SynchronizationDatabaseController extends VoyagerDatabaseController
    *
    * @return \Illuminate\Http\RedirectResponse
    */
-  public function create()
+  public function createSync($id)
   {
       Voyager::canOrFail('browse_database');
-
-      $db = $this->prepareDbManager('create');
+      $prefillData = DataSource::where('id', $id)->value('sync_data');
+      $db = $this->prepareDbManager('create', null, $prefillData);
 
       return Voyager::view('database.edit-add', compact('db'));
   }
 
   protected function prepareDbManager($action, $table = '', $prefillData = '')
   {
-      dd($this->fetchedData);
+      // dd($prefillData);
+      $prefill = json_decode($prefillData, true);
       $db = new \stdClass();
 
       // Need to get the types first to register custom types
@@ -108,8 +127,8 @@ class SynchronizationDatabaseController extends VoyagerDatabaseController
           $db->table = SchemaManager::listTableDetails($table);
           $db->formAction = route('voyager.database.update', $table);
       } else {
-          $db->table = new Table('New Table');
-
+          $tableName = $this->getSyncDataEntityName($prefill);
+          $db->table = new Table($tableName);
           // Add prefilled columns
           $db->table->addColumn('id', 'integer', [
               'unsigned'      => true,
@@ -121,6 +140,17 @@ class SynchronizationDatabaseController extends VoyagerDatabaseController
               'notnull'       => true,
               'autoincrement' => false,
           ]);
+          // Add columns based on sync
+          foreach($prefill as $row) {
+            foreach($row as $column => $value) {
+              // dd($column, $value);
+              $db->table->addColumn($column, 'text', [
+                  'unsigned'      => false,
+                  'notnull'       => false,
+                  'autoincrement' => false,
+              ]);
+            }
+          }
 
           $db->table->setPrimaryKey(['id'], 'primary');
 
@@ -134,6 +164,13 @@ class SynchronizationDatabaseController extends VoyagerDatabaseController
       $db->platform = SchemaManager::getDatabasePlatform()->getName();
 
       return $db;
+  }
+
+  public function getSyncDataEntityName($data) {
+    foreach ($data as $entity => $properties) {
+      // dd($entity);
+      return $entity;
+    }
   }
 
 }
