@@ -25,7 +25,7 @@ class CreateSynchronizationTable extends Migration
             $table->enum('status',  $this->status_types)->default($this->status_types[0]);
             $table->timestamps();
 
-            $table->foreign('data_source_id')->references('id')->on('data_sources');
+            $table->foreign('data_source_id')->references('id')->on('data_sources')->onDelete('cascade');
         });
     }
 

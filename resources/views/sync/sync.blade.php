@@ -8,7 +8,7 @@
     </h1>
     <i>{{  $pageData->url }}<i/>
     @if (!$pageData->is_synced)
-      <form action="{{ route('portal.synchronization.check', $pageData->id) }}" method="POST" id="check-action" style="display: inline-block">
+      <form action="{{ route('portal.synchronization.check', $pageData->id) }}" method="POST" id="check-action" class="sync-action" style="display: inline-block">
           {{ csrf_field() }}
           <button type="submit" class="btn btn-success">
               <span>{{ __('origam_portal.generic.check') }}</span>
@@ -16,7 +16,7 @@
       </form>
     @endif
     @if ($pageData->is_synced)
-      <form action="{{ route('portal.synchronization.syncStart', $pageData->id) }}" method="POST" id="start-action" style="display: inline-block">
+      <form action="{{ route('portal.synchronization.syncStart', $pageData->id) }}" method="POST" id="start-action" class="sync-action" style="display: inline-block">
           {{ csrf_field() }}
           <button type="submit" class="btn btn-success">
               <span>{{ __('origam_portal.generic.start') }}</span>
@@ -222,18 +222,8 @@
 @section('javascript')
 
     <script>
-        var formCheck = document.querySelector('#check-action');
-        var btn = formCheck.querySelector('button[type="submit"]');
-        btn.addEventListener('click', function(ev){
-            if (form.checkValidity()) {
-                form.className = 'hidden';
-                document.querySelector('.progress.hidden').className = 'progress';
-            } else {
-                ev.preventDefault();
-            }
-        });
-        var formStart = document.querySelector('#start-action');
-        var btn = formStart.querySelector('button[type="submit"]');
+        var form = document.querySelector('form.sync-action');
+        var btn = form.querySelector('button[type="submit"]');
         btn.addEventListener('click', function(ev){
             if (form.checkValidity()) {
                 form.className = 'hidden';
@@ -255,7 +245,7 @@
         //     }
         //   });
         //   $.ajax({
-        //     url: "{{route('portal.synchronization.sync', $pageData->id)}}",
+        //     url: "route('portal.synchronization.sync', $pageData->id)",
         //     type: "POST",
         //     contentType: 'application/json; charset=utf-8',
         //     data: {

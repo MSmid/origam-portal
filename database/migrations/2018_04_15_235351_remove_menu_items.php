@@ -17,6 +17,7 @@ class RemoveMenuItems extends Migration
         MenuItem::where('title', 'Pages')->delete();
         MenuItem::where('title', 'Posts')->delete();
         MenuItem::where('title', 'Categories')->delete();
+        MenuItem::where('title', 'Compass')->delete();
     }
 
     /**

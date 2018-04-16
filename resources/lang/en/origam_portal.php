@@ -522,7 +522,9 @@ return [
             'users'        => 'Users',
 
             'sync'         => 'Synchronization',
-            'web_services' => 'Web Services'
+            'web_services' => 'Web Services',
+            'data_sources' => 'Data Sources',
+            'scheduler' => 'Scheduler'
         ],
         'roles'      => [
             'admin' => 'Administrator',

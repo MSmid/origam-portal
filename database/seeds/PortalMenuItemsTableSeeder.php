@@ -18,6 +18,7 @@ class PortalMenuItemsTableSeeder extends Seeder
 
             $menu = Menu::where('name', 'admin')->firstOrFail();
 
+            //Sync
             $syncMenuItem = MenuItem::firstOrNew([
                 'menu_id' => $menu->id,
                 'title'   => __('origam_portal.seeders.menu_items.sync'),
@@ -33,14 +34,15 @@ class PortalMenuItemsTableSeeder extends Seeder
                 ])->save();
             }
 
-            $OrigamSyncMenuItem = MenuItem::firstOrNew([
+            //Sync -> Origam
+            $menuItem = MenuItem::firstOrNew([
                 'menu_id' => $menu->id,
                 'title'   => 'Origam',
                 'url'     => '',
                 'route'      => 'portal.synchronization.origam.index',
             ]);
-            if (!$OrigamSyncMenuItem->exists) {
-                $OrigamSyncMenuItem->fill([
+            if (!$menuItem->exists) {
+                $menuItem->fill([
                     'target'     => '_self',
                     'icon_class' => 'voyager-data',
                     'color'      => null,
@@ -49,19 +51,54 @@ class PortalMenuItemsTableSeeder extends Seeder
                 ])->save();
             }
 
-            $OrigamSyncMenuItem = MenuItem::firstOrNew([
+            //Sync -> Webservices
+            $menuItem = MenuItem::firstOrNew([
                 'menu_id' => $menu->id,
                 'title'   => __('origam_portal.seeders.menu_items.web_services'),
                 'url'     => '',
                 'route'      => 'portal.synchronization.services.index',
             ]);
-            if (!$OrigamSyncMenuItem->exists) {
-                $OrigamSyncMenuItem->fill([
+            if (!$menuItem->exists) {
+                $menuItem->fill([
                     'target'     => '_self',
                     'icon_class' => 'voyager-data',
                     'color'      => null,
                     'parent_id'  => $syncMenuItem->id,
                     'order'      => 2,
+                ])->save();
+            }
+
+            //Sync -> Data Sources
+            $menuItem = MenuItem::firstOrNew([
+                'menu_id' => $menu->id,
+                'title'   => __('origam_portal.seeders.menu_items.data_sources'),
+                'url'     => '',
+                'route'      => 'voyager.data_sources.index',
+            ]);
+            if (!$menuItem->exists) {
+                $menuItem->fill([
+                    'target'     => '_self',
+                    'icon_class' => 'voyager-data',
+                    'color'      => null,
+                    'parent_id'  => $syncMenuItem->id,
+                    'order'      => 3,
+                ])->save();
+            }
+
+            //Sync -> Scheduler
+            $menuItem = MenuItem::firstOrNew([
+                'menu_id' => $menu->id,
+                'title'   => __('origam_portal.seeders.menu_items.scheduler'),
+                'url'     => '',
+                'route'      => 'portal.scheduler.index',
+            ]);
+            if (!$menuItem->exists) {
+                $menuItem->fill([
+                    'target'     => '_self',
+                    'icon_class' => 'voyager-calendar',
+                    'color'      => null,
+                    'parent_id'  => $syncMenuItem->id,
+                    'order'      => 10,
                 ])->save();
             }
         }

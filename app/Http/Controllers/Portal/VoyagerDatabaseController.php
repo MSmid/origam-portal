@@ -78,7 +78,7 @@ class VoyagerDatabaseController extends BaseVoyagerDatabaseController
   public function updateDataSourceAndRedirect($id, $tableName) {
     DataSource::where('id', $id)->update(['is_synced' => true]);
     return redirect()
-       ->route('portal.synchronization.origam.index')
+       ->route('portal.data_sources.index')
        ->with($this->alertSuccess(__('origam_portal.database.success_create_sync', ['table' => $tableName, 'dsname' => DataSource::where('id', $id)->value('name')])));
   }
 

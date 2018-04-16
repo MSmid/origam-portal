@@ -102,7 +102,9 @@ class SynchronizationDatabaseController extends VoyagerDatabaseController
       //1) add only new rows by uuid
       $this->databaseSyncAdd($table, $data['data']);
       //2) delete rows not present in $data by uuid
+      //TODO
       //3) update the same uuid
+      //TODO
     } else {
       event(new SyncFailed($id, $data['error']));
     }
