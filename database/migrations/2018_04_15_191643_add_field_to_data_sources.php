@@ -14,7 +14,7 @@ class AddFieldToDataSources extends Migration
     public function up()
     {
         Schema::table('data_sources', function (Blueprint $table) {
-            $table->string('entity_name', 50)->nullable;
+            $table->string('entity_name', 50)->nullable();
         });
     }
 

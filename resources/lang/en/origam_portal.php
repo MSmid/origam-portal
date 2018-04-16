@@ -244,6 +244,8 @@ return [
 
     'database' => [
         'create_new_sync' => 'Create Synchronization',
+        'success_create_sync' => 'Synchronization table :table for data source :dsname successfully created',
+
         'add_bread'                 => 'Add BREAD to this table',
         'add_new_column'            => 'Add New Column',
         'add_softdeletes'           => 'Add Soft Deletes',

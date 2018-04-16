@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Portal;
 
 use App\DataSource;
+use App\Events\SyncStarted;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use TCG\Voyager\Database\DatabaseUpdater;
 use TCG\Voyager\Database\Schema\Column;
@@ -33,7 +35,7 @@ class SynchronizationDatabaseController extends VoyagerDatabaseController
     return $this->renderView('sync.sync', $id, null);
   }
 
-  public function postSync(Request $request, $id) {
+  public function postCheck(Request $request, $id) {
     $url = DataSource::where('id', $id)->value('url');
     $data = $this->sync($url, $id);
     return $this->renderView('sync.sync', $id, $data);
@@ -46,7 +48,6 @@ class SynchronizationDatabaseController extends VoyagerDatabaseController
         function ($res) use ($id) {
           $rawData = $res->getBody()->getContents();
           $this->storeSyncData($id, $rawData);
-          $this->storeEntityName($id, $rawData);
           return [
             'data' => $rawData
           ];
@@ -78,6 +79,7 @@ class SynchronizationDatabaseController extends VoyagerDatabaseController
       break;
     }
     $data = json_encode($data);
+    $this->storeEntityName($id, $data);
     DataSource::where('id', $id)->update(['sync_data' => $data]);
   }
 
@@ -90,35 +92,46 @@ class SynchronizationDatabaseController extends VoyagerDatabaseController
   public function syncStart($id) {
     $ds = DataSource::where('id', $id);
 
+    event(new SyncStarted($id));
     $data = $this->sync($ds->value('url'), $id);
     //get model by entity_name
-    //sync strategy:
-    //1) add only new rows by uuid
-    //2) delete rows not present in $data by uuid
-    //3) update the same uuid
-    // dd($data);
+    $table = $ds->value('entity_name');
+    if (!isset($data['error'])) {
+      //sync strategy:
+      //1) add only new rows by uuid
+      $this->databaseSyncAdd($table, $data['data']);
+      //2) delete rows not present in $data by uuid
+      //3) update the same uuid
+    } else {
+      //Throw error
+    }
+
     $data = ['result' => 'completed'];
     return $this->renderView('sync.sync', $id, $data);
   }
 
-  // public function index()
-  // {
-  //     Voyager::canOrFail('browse_database');
-  //
-  //     $dataTypes = Voyager::model('DataType')->select('id', 'name', 'slug')->get()->keyBy('name')->toArray();
-  //
-  //     $tables = array_map(function ($table) use ($dataTypes) {
-  //         $table = [
-  //             'name'       => $table,
-  //             'slug'       => isset($dataTypes[$table]['slug']) ? $dataTypes[$table]['slug'] : null,
-  //             'dataTypeId' => isset($dataTypes[$table]['id']) ? $dataTypes[$table]['id'] : null,
-  //         ];
-  //
-  //         return (object) $table;
-  //     }, SchemaManager::listTableNames());
-  //
-  //     return Voyager::view('database.index')->with(compact('dataTypes', 'tables'));
-  // }
+  public function databaseSyncAdd($table, $rawData) {
+    $data = json_decode($rawData, true);
+    DB::table($table)->truncate();
+    //skip ROOT if present
+    if(isset($data['ROOT'])) {
+      $data = $data['ROOT'];
+    }
+    //skip entity
+    if(isset($data[$table])) {
+      $data = $data[$table];
+    }
+    //loop over dataset, rename id to uuid
+    foreach ($data as $row) {
+      if (isset($row['Id'])) {
+        $row['uuid'] = $row['Id'];
+        unset($row['Id']);
+      }
+      DB::table($table)->insert(
+        $row
+      );
+    }
+  }
 
   /**
    * Create database table.
@@ -130,6 +143,7 @@ class SynchronizationDatabaseController extends VoyagerDatabaseController
       Voyager::canOrFail('browse_database');
       $prefillData = DataSource::where('id', $id)->value('sync_data');
       $db = $this->prepareDbManager('create', null, $prefillData);
+      $db->ds_id = $id;
 
       return Voyager::view('database.edit-add', compact('db'));
   }
@@ -159,14 +173,16 @@ class SynchronizationDatabaseController extends VoyagerDatabaseController
               'notnull'       => false,
               'autoincrement' => false,
           ]);
-          // Add columns based on sync
+          // Add columns based on sync except Id
           foreach($prefill as $row) {
             foreach($row as $column => $value) {
-              $db->table->addColumn($column, 'text', [
-                  'unsigned'      => false,
-                  'notnull'       => false,
-                  'autoincrement' => false,
-              ]);
+              if ($column != 'Id') {
+                $db->table->addColumn($column, 'text', [
+                    'unsigned'      => false,
+                    'notnull'       => false,
+                    'autoincrement' => false,
+                ]);
+              }
             }
           }
 

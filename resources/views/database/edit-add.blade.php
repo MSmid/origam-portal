@@ -24,6 +24,8 @@
                     <input type="hidden" :value="tableJson" name="table">
 
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
+
+                    <input type="hidden" name="ds_id" value="{{ $db->ds_id }}">
                 </form>
             </div>
         </div>

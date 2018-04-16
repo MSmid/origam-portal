@@ -8,7 +8,7 @@
     </h1>
     <i>{{  $pageData->url }}<i/>
     @if (!$pageData->is_synced)
-      <form action="{{ route('portal.synchronization.sync', $pageData->id) }}" method="POST" id="check-action" style="display: inline-block">
+      <form action="{{ route('portal.synchronization.check', $pageData->id) }}" method="POST" id="check-action" style="display: inline-block">
           {{ csrf_field() }}
           <button type="submit" class="btn btn-success">
               <span>{{ __('origam_portal.generic.check') }}</span>
