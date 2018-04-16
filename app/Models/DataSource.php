@@ -15,11 +15,15 @@ class DataSource extends Model
       return $this->hasMany(Synchronization::class);
     }
 
+    public function schedulers() {
+      return $this->hasMany(Scheduler::class);
+    }
+
     public function getStatusAttribute() {
       $status = $this->synchronizations()->orderBy('started_at', 'desc')->limit(1)->value('status');
 
       return ($status ? $status : 'none');
     }
 
-    
+
 }
