@@ -1,0 +1,22 @@
+.navbar-nav {
+  li.notifications {
+    position: absolute;
+    right: 65px;
+    
+    a {
+      padding-top: 5px;
+    }
+    i.voyager-mail {
+      font-size: 25px;
+    }
+    span.number {
+      border-radius: 50%;
+      background: #f15b47;
+      height: 17px;
+      width: 17px;
+      padding: 0;
+      font-size: 12px;
+      font-weight: 700;
+    }
+  }
+}

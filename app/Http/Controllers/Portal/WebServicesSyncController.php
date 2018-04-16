@@ -81,11 +81,7 @@ class WebServicesSyncController extends SynchronizationBreadController
       // Check if server side pagination is enabled
       $isServerSide = isset($dataType->server_side) && $dataType->server_side;
 
-      $view = 'voyager::bread.browse';
-
-      if (view()->exists("voyager::$slug.browse")) {
-          $view = "voyager::$slug.browse";
-      }
+      $view = 'sync.browse';
 
       return Voyager::view($view, compact(
           'dataType',

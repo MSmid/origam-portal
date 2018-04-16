@@ -2,6 +2,29 @@
   height: auto;
 }
 
+.navbar-nav li.notifications {
+  position: absolute;
+  right: 65px;
+}
+
+.navbar-nav li.notifications a {
+  padding-top: 5px;
+}
+
+.navbar-nav li.notifications i.voyager-mail {
+  font-size: 25px;
+}
+
+.navbar-nav li.notifications span.number {
+  border-radius: 50%;
+  background: #f15b47;
+  height: 17px;
+  width: 17px;
+  padding: 0;
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .btn-failed {
   background: #FA2A00;
 }

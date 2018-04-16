@@ -8,6 +8,11 @@ use TCG\Voyager\Http\Controllers\VoyagerController as BaseVoyagerController;
 class VoyagerController extends BaseVoyagerController
 {
 
+  public function index()
+  {
+      return view('index');
+  }
+
   public function logout()
   {
       Auth::logout();
