@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Portal;
 
 use App\DataSource;
 use App\Events\SyncStarted;
+use App\Events\SyncSucceed;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Http\Request;
@@ -103,9 +104,9 @@ class SynchronizationDatabaseController extends VoyagerDatabaseController
       //2) delete rows not present in $data by uuid
       //3) update the same uuid
     } else {
-      //Throw error
+      event(new SyncFailed($id, $data['error']));
     }
-
+    event(new SyncSucceed($id));
     $data = ['result' => 'completed'];
     return $this->renderView('sync.sync', $id, $data);
   }

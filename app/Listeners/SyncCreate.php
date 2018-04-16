@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\SyncStarted;
+use App\Synchronization;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
@@ -26,6 +27,10 @@ class SyncCreate
      */
     public function handle(SyncStarted $event)
     {
-        dd($event);
+        $sync = new Synchronization;
+        $sync->fill([
+            'data_source_id' => $event->dataSourceId,
+            'status' => 'in-progress'
+          ])->save();
     }
 }

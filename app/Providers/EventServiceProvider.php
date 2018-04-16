@@ -18,6 +18,12 @@ class EventServiceProvider extends ServiceProvider
         ],
         'App\Events\SyncStarted' => [
           'App\Listeners\SyncCreate'
+        ],
+        'App\Events\SyncSucceed' => [
+          'App\Listeners\SyncUpdateSuccess'
+        ],
+        'App\Events\SyncFailed' => [
+          'App\Listeners\SyncUpdateFail'
         ]
     ];
 
