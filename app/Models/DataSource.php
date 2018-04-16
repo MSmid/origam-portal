@@ -9,7 +9,7 @@ class DataSource extends Model
 
     protected $appends = ['status'];
 
-    protected $fillable = ['sync_data'];
+    protected $fillable = ['sync_data', 'entity_name'];
 
     public function synchronizations() {
       return $this->hasMany(Synchronization::class);
@@ -20,4 +20,6 @@ class DataSource extends Model
 
       return ($status ? $status : 'none');
     }
+
+    
 }

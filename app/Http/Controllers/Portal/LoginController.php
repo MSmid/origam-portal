@@ -34,20 +34,32 @@ class LoginController extends BaseVoyagerAuthController
           return $this->sendLockoutResponse($request);
       }
 
-      $cookie = $this->origamLogin($request);
+      if (env('ORIGAM_DISABLE_AUTH')) {
+        $cookie = $this->origamLogin($request);
 
-      if($cookie) {
+        if($cookie) {
+          $credentials = $this->credentials($request);
+
+          if ($this->guard()->attempt($credentials, $request->has('remember'))) {
+            return $this->sendLoginResponse($request, $cookie);
+          }
+          //Password is okay for Origam but not for Laravel Auth
+          return $this->sendFailedLoginResponse($request);
+        }
+
+        $this->incrementLoginAttempts($request);
+        return $this->sendFailedLoginResponse($request);
+      } else {
         $credentials = $this->credentials($request);
 
         if ($this->guard()->attempt($credentials, $request->has('remember'))) {
-          return $this->sendLoginResponse($request, $cookie);
+            return $this->sendLoginResponse($request);
         }
-        //Password is okay for Origam but not for Laravel Auth
-        return $this->sendFailedLoginResponse($request);
-      }
 
-      $this->incrementLoginAttempts($request);
-      return $this->sendFailedLoginResponse($request);
+        $this->incrementLoginAttempts($request);
+
+        return $this->sendFailedLoginResponse($request);
+      }      
   }
 
   public function origamLogin(Request $request)

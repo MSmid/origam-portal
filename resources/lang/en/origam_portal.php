@@ -14,6 +14,7 @@ return [
         'syncing' => 'Syncing',
         'check' => 'Check',
         'sync_now' => 'Sync Now',
+        'start' => 'Start',
 
         'action'                 => 'Action',
         'actions'                => 'Actions',

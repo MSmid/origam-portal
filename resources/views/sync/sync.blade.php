@@ -7,12 +7,23 @@
         <i class="voyager-data"></i> {{ $pageData->name }}
     </h1>
     <i>{{  $pageData->url }}<i/>
-    <form action="{{ route('portal.synchronization.sync', $pageData->id) }}" method="POST" id="check-action" style="display: inline-block">
-        {{ csrf_field() }}
-        <button type="submit" class="btn btn-success">
-            <span>{{ __('origam_portal.generic.check') }}</span>
-        </button>
-    </form>
+    @if (!$pageData->is_synced)
+      <form action="{{ route('portal.synchronization.sync', $pageData->id) }}" method="POST" id="check-action" style="display: inline-block">
+          {{ csrf_field() }}
+          <button type="submit" class="btn btn-success">
+              <span>{{ __('origam_portal.generic.check') }}</span>
+          </button>
+      </form>
+    @endif
+    @if ($pageData->is_synced)
+      <form action="{{ route('portal.synchronization.syncStart', $pageData->id) }}" method="POST" id="start-action" style="display: inline-block">
+          {{ csrf_field() }}
+          <button type="submit" class="btn btn-success">
+              <span>{{ __('origam_portal.generic.start') }}</span>
+          </button>
+      </form>
+    @endif
+
     {{-- AJAX --}}
     {{-- <button type="submit" id="check-action" class="btn btn-success">
         <span>{{ __('origam_portal.generic.check') }}</span>
@@ -43,6 +54,12 @@
                   <h2>Error</h2>
                   <div>
                     {{ $data['error'] }}
+                  </div>
+                @endif
+                @if(isset($data['result']))
+                  <h2>Result</h2>
+                  <div>
+                    {{ $data['result'] }}
                   </div>
                 @endif
               @endif
@@ -205,8 +222,18 @@
 @section('javascript')
 
     <script>
-        var form = document.querySelector('#check-action');
-        var btn = form.querySelector('button[type="submit"]');
+        var formCheck = document.querySelector('#check-action');
+        var btn = formCheck.querySelector('button[type="submit"]');
+        btn.addEventListener('click', function(ev){
+            if (form.checkValidity()) {
+                form.className = 'hidden';
+                document.querySelector('.progress.hidden').className = 'progress';
+            } else {
+                ev.preventDefault();
+            }
+        });
+        var formStart = document.querySelector('#start-action');
+        var btn = formStart.querySelector('button[type="submit"]');
         btn.addEventListener('click', function(ev){
             if (form.checkValidity()) {
                 form.className = 'hidden';

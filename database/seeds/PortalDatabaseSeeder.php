@@ -27,5 +27,8 @@ class PortalDatabaseSeeder extends Seeder
 
         //Permissions
         $this->seed('PortalPermissionsTableSeeder');
+
+        //Settings
+        $this->seed('PortalSettingsTableSeeder');
     }
 }

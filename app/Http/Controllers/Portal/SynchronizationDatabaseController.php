@@ -46,6 +46,7 @@ class SynchronizationDatabaseController extends VoyagerDatabaseController
         function ($res) use ($id) {
           $rawData = $res->getBody()->getContents();
           $this->storeSyncData($id, $rawData);
+          $this->storeEntityName($id, $rawData);
           return [
             'data' => $rawData
           ];
@@ -77,8 +78,27 @@ class SynchronizationDatabaseController extends VoyagerDatabaseController
       break;
     }
     $data = json_encode($data);
-    // dd($data);
     DataSource::where('id', $id)->update(['sync_data' => $data]);
+  }
+
+  public function storeEntityName($id, $rawData) {
+    $data = json_decode($rawData, true);
+    $entityName = $this->getSyncDataEntityName($data);
+    DataSource::where('id', $id)->update(['entity_name' => $entityName]);
+  }
+
+  public function syncStart($id) {
+    $ds = DataSource::where('id', $id);
+
+    $data = $this->sync($ds->value('url'), $id);
+    //get model by entity_name
+    //sync strategy:
+    //1) add only new rows by uuid
+    //2) delete rows not present in $data by uuid
+    //3) update the same uuid
+    // dd($data);
+    $data = ['result' => 'completed'];
+    return $this->renderView('sync.sync', $id, $data);
   }
 
   // public function index()
@@ -116,7 +136,6 @@ class SynchronizationDatabaseController extends VoyagerDatabaseController
 
   protected function prepareDbManager($action, $table = '', $prefillData = '')
   {
-      // dd($prefillData);
       $prefill = json_decode($prefillData, true);
       $db = new \stdClass();
 
@@ -137,13 +156,12 @@ class SynchronizationDatabaseController extends VoyagerDatabaseController
           ]);
           $db->table->addColumn('uuid', 'text', [
               'unsigned'      => false,
-              'notnull'       => true,
+              'notnull'       => false,
               'autoincrement' => false,
           ]);
           // Add columns based on sync
           foreach($prefill as $row) {
             foreach($row as $column => $value) {
-              // dd($column, $value);
               $db->table->addColumn($column, 'text', [
                   'unsigned'      => false,
                   'notnull'       => false,
@@ -168,7 +186,6 @@ class SynchronizationDatabaseController extends VoyagerDatabaseController
 
   public function getSyncDataEntityName($data) {
     foreach ($data as $entity => $properties) {
-      // dd($entity);
       return $entity;
     }
   }
