@@ -34,7 +34,7 @@
 @stop
 
 @section('javascript')
-    @include('voyager::tools.database.vue-components.database-table-editor')
+    @include('database.vue-components.database-table-editor')
 
     <script>
         new Vue({

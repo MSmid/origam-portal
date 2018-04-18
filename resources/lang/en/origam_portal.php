@@ -15,6 +15,7 @@ return [
         'check' => 'Check',
         'sync_now' => 'Sync Now',
         'start' => 'Start',
+        'mark_as_read' => 'Mark as Read',
 
         'action'                 => 'Action',
         'actions'                => 'Actions',
@@ -245,6 +246,7 @@ return [
     'database' => [
         'create_new_sync' => 'Create Synchronization',
         'success_create_sync' => 'Synchronization table :table for data source :dsname successfully created',
+        'is_workqueue' => 'Is this data source for work queue notifications?',
 
         'add_bread'                 => 'Add BREAD to this table',
         'add_new_column'            => 'Add New Column',
@@ -524,7 +526,8 @@ return [
             'sync'         => 'Synchronization',
             'web_services' => 'Web Services',
             'data_sources' => 'Data Sources',
-            'scheduler' => 'Scheduler'
+            'scheduler' => 'Scheduler',
+            'notifications' => 'Notifications'
         ],
         'roles'      => [
             'admin' => 'Administrator',

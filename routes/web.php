@@ -22,8 +22,8 @@ Route::group(['prefix' => config('origam_portal.portal.domain')], function () {
     Route::post('login', ['uses' => 'Portal\LoginController@postLogin', 'as' => 'postLogin']);
     // Route::post('logout', ['uses' => 'Portal\VoyagerController@logout',  'as' => 'logout']);
 
-    // Synchronization
     Route::group(['as' => 'portal.'], function () {
+      // Synchronization
       Route::group([
         'as' => 'synchronization.',
         'prefix' => 'synchronization'
@@ -39,9 +39,15 @@ Route::group(['prefix' => config('origam_portal.portal.domain')], function () {
         Route::get('{id}/create', ['uses' => 'Portal\SynchronizationDatabaseController@createSync', 'as' => 'create']);
         Route::post('{id}/sync', ['uses' => 'Portal\SynchronizationDatabaseController@syncStart', 'as' => 'syncStart']);
       });
+      // Notifications
+      Route::group([
+        'as' => 'notifications.',
+        'prefix' => 'notifications'
+      ], function(){
+        Route::get('{slug}', ['uses' => 'Portal\NotificationController@showNotifications', 'as' => 'show']);
+        Route::get('{slug}/{uuid}', ['uses' => 'Portal\NotificationController@showNotificationMessage', 'as' => 'showMsg']);
+        Route::get('{slug}/{uuid}/mark', ['uses' => 'Portal\NotificationController@markAsRead', 'as' => 'mark']);
+      });
     });
-
-    // Scheduler
-    Route::resource('scheduler', 'Portal\SynchronizationBreadController');
 
 });

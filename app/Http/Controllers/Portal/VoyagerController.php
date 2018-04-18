@@ -8,10 +8,10 @@ use TCG\Voyager\Http\Controllers\VoyagerController as BaseVoyagerController;
 class VoyagerController extends BaseVoyagerController
 {
 
-  public function index()
-  {
-      return view('index');
-  }
+  // public function index()
+  // {
+  //     return Voyager::view('voyager::index');
+  // }
 
   public function logout()
   {

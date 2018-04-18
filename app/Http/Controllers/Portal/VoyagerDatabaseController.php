@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Portal;
 
 use App\DataSource;
+use App\Notification;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -34,9 +35,81 @@ class VoyagerDatabaseController extends BaseVoyagerDatabaseController
       Voyager::canOrFail('browse_database');
 
       try {
+          $table = $request->table;
+          //If it's datatable for notification work queue, there few more steps
+          //to be done: prefix table name, create notification and add foreign keys
+          if (isset($request->is_workqueue) && $request->is_workqueue == 'on') {
+              //prefix
+              $table = json_decode($request->table, true);
+              $table['name'] = 'wq_' .$table['name'];
+              //update DS entity_name
+              $ds = DataSource::where('id', $request->ds_id);
+              // $ds->update(['entity_name' => $table['name']]);
+              //insert new notification
+              $nid = DB::table('notifications')->insertGetId(
+                ['name' => $ds->value('name'), 'data_source_id' => $request->ds_id, 'slug_datatable_name' => $table['name']]
+              );
+              //Add foreing keys on notificaiton id and user id, is_read flag, subject
+              array_push(
+                $table['columns'], [
+                  'name' => 'notification_id',
+                  'oldname' => '',
+                  'type' => [
+                    'name' => 'integer',
+                    'category' => 'Numbers',
+                    'default' => [
+                      'type' => 'number',
+                      'step' => 'any']
+                  ],
+                  'length' => null,
+                  'fixed' => false,
+                  'unsigned' => true,
+                  'autoincrement' => false,
+                  'notnull' => true,
+                  'default' => null
+                ]);
+              array_push($table['indexes'], ['columns' => ['notification_id'], 'type' => 'INDEX', 'name' => '', 'table' => 'Notifications']);
+              array_push(
+                $table['columns'], [
+                  'name' => 'is_read',
+                  'oldname' => '',
+                  'type' => [
+                    'name' => 'tinyint',
+                    'category' => 'Numbers',
+                    'default' => [
+                      'type' => 'number',
+                      'step' => 'any']
+                  ],
+                  'length' => null,
+                  'fixed' => false,
+                  'unsigned' => false,
+                  'autoincrement' => false,
+                  'notnull' => false,
+                  'default' => 0
+                ]);
+              array_push(
+                $table['columns'], [
+                  'name' => 'Subject',
+                  'oldname' => '',
+                  'type' => [
+                    'name' => 'text',
+                    'category' => 'Strings',
+                    'notSupportIndex' => true,
+                    'default' => [
+                      'disabled' => true]
+                  ],
+                  'length' => null,
+                  'fixed' => false,
+                  'unsigned' => false,
+                  'autoincrement' => false,
+                  'notnull' => false,
+                  'default' => null
+                ]);
+          }
+          // dd(json_decode($table, true));
           Type::registerCustomPlatformTypes();
 
-          $table = Table::make($request->table);
+          $table = Table::make($table);
           SchemaManager::createTable($table);
 
           if (isset($request->create_model) && $request->create_model == 'on') {
@@ -78,7 +151,7 @@ class VoyagerDatabaseController extends BaseVoyagerDatabaseController
   public function updateDataSourceAndRedirect($id, $tableName) {
     DataSource::where('id', $id)->update(['is_synced' => true]);
     return redirect()
-       ->route('portal.data_sources.index')
+       ->route('voyager.data_sources.index')
        ->with($this->alertSuccess(__('origam_portal.database.success_create_sync', ['table' => $tableName, 'dsname' => DataSource::where('id', $id)->value('name')])));
   }
 

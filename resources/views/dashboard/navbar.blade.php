@@ -38,8 +38,10 @@
                     <span class="btn btn-sm btn-success number pull-right">2</span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-animated">
-                    <li>zpráva 1</li>
-                    <li>zpráva 2</li>
+                    <?php dd($msgs); ?>
+                    {{-- @foreach ($iterable as $key => $value)
+
+                    @endforeach --}}
                 </ul>
             </li>
             <li class="dropdown profile">

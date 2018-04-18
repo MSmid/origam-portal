@@ -91,9 +91,10 @@ class SynchronizationDatabaseController extends VoyagerDatabaseController
   }
 
   public function syncStart($id) {
-    $ds = DataSource::where('id', $id);
 
     event(new SyncStarted($id));
+    
+    $ds = DataSource::where('id', $id);
     $data = $this->sync($ds->value('url'), $id);
     //get model by entity_name
     $table = $ds->value('entity_name');
@@ -102,9 +103,9 @@ class SynchronizationDatabaseController extends VoyagerDatabaseController
       //1) add only new rows by uuid
       $this->databaseSyncAdd($table, $data['data']);
       //2) delete rows not present in $data by uuid
-      //TODO
-      //3) update the same uuid
-      //TODO
+      //$this->databaseSyncDelete($table, $data['data']);
+      //3) update the values of rows with same uuid
+      //$this->databaseSyncUpdate($table, $data['data']);
     } else {
       event(new SyncFailed($id, $data['error']));
     }

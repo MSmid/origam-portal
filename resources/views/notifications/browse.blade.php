@@ -13,7 +13,7 @@
             </a>
         @endcan
         @can('delete',app($dataType->model_name))
-            @include('voyager::partials.bulk-delete')
+            {{-- @include('voyager::partials.bulk-delete') --}}
         @endcan
         @include('voyager::multilingual.language-selector')
     </div>

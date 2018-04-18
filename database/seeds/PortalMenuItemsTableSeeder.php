@@ -90,7 +90,7 @@ class PortalMenuItemsTableSeeder extends Seeder
                 'menu_id' => $menu->id,
                 'title'   => __('origam_portal.seeders.menu_items.scheduler'),
                 'url'     => '',
-                'route'      => 'portal.scheduler.index',
+                'route'      => 'voyager.scheduler.index',
             ]);
             if (!$menuItem->exists) {
                 $menuItem->fill([
@@ -99,6 +99,23 @@ class PortalMenuItemsTableSeeder extends Seeder
                     'color'      => null,
                     'parent_id'  => $syncMenuItem->id,
                     'order'      => 10,
+                ])->save();
+            }
+
+            //Notifications
+            $menuItem = MenuItem::firstOrNew([
+                'menu_id' => $menu->id,
+                'title'   => __('origam_portal.seeders.menu_items.notifications'),
+                'url'     => '',
+                'route'      => 'voyager.notifications.index',
+            ]);
+            if (!$menuItem->exists) {
+                $menuItem->fill([
+                    'target'     => '_self',
+                    'icon_class' => 'voyager-mail',
+                    'color'      => null,
+                    'parent_id'  => '',
+                    'order'      => 6,
                 ])->save();
             }
         }

@@ -77,7 +77,7 @@ class OrigamSyncController extends SynchronizationBreadController
       if (($isModelTranslatable = is_bread_translatable($model))) {
           $dataTypeContent->load('translations');
       }
-
+      
       // Check if server side pagination is enabled
       $isServerSide = isset($dataType->server_side) && $dataType->server_side;
 
