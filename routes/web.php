@@ -44,7 +44,8 @@ Route::group(['prefix' => config('origam_portal.portal.domain')], function () {
         'as' => 'notifications.',
         'prefix' => 'notifications'
       ], function(){
-        Route::get('{slug}', ['uses' => 'Portal\NotificationController@showNotifications', 'as' => 'show']);
+        Route::get('/', ['uses' => 'Portal\NotificationController@index', 'as' => 'index']);
+        // Route::get('{slug}', ['uses' => 'Portal\NotificationController@showNotifications', 'as' => 'show']);
         Route::get('{slug}/{uuid}', ['uses' => 'Portal\NotificationController@showNotificationMessage', 'as' => 'showMsg']);
         Route::get('{slug}/{uuid}/mark', ['uses' => 'Portal\NotificationController@markAsRead', 'as' => 'mark']);
       });

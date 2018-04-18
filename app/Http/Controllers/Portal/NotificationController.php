@@ -96,12 +96,13 @@ class NotificationController extends BaseVoyagerBreadController
     }
 
     public function showNotifications($slug) {
-      dd($slug);
+      dd('ahoj' . $slug);
       return 'ahoj' . $slug;
     }
 
     public function showNotificationMessage(Request $request, $datatableSlug, $uuid)
     {
+        // dd($datatableSlug);
         $data = DB::table($datatableSlug)->where('uuid', $uuid)->get();
         $subject = null;
         if (isset($data[0])) {

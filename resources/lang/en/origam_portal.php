@@ -16,6 +16,7 @@ return [
         'sync_now' => 'Sync Now',
         'start' => 'Start',
         'mark_as_read' => 'Mark as Read',
+        'back' => 'Back',
 
         'action'                 => 'Action',
         'actions'                => 'Actions',

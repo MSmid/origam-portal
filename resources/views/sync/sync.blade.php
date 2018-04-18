@@ -6,24 +6,7 @@
     <h1 class="page-title">
         <i class="voyager-data"></i> {{ $pageData->name }}
     </h1>
-    <i>{{  $pageData->url }}<i/>
-    @if (!$pageData->is_synced)
-      <form action="{{ route('portal.synchronization.check', $pageData->id) }}" method="POST" id="check-action" class="sync-action" style="display: inline-block">
-          {{ csrf_field() }}
-          <button type="submit" class="btn btn-success">
-              <span>{{ __('origam_portal.generic.check') }}</span>
-          </button>
-      </form>
-    @endif
-    @if ($pageData->is_synced)
-      <form action="{{ route('portal.synchronization.syncStart', $pageData->id) }}" method="POST" id="start-action" class="sync-action" style="display: inline-block">
-          {{ csrf_field() }}
-          <button type="submit" class="btn btn-success">
-              <span>{{ __('origam_portal.generic.start') }}</span>
-          </button>
-      </form>
-    @endif
-
+    <i>{{  $pageData->url }}</i>
     {{-- AJAX --}}
     {{-- <button type="submit" id="check-action" class="btn btn-success">
         <span>{{ __('origam_portal.generic.check') }}</span>
@@ -33,105 +16,52 @@
 @section('content')
 
     <div class="page-content container-fluid">
+        @if (!$pageData->is_synced)
+          <form action="{{ route('portal.synchronization.check', $pageData->id) }}" method="POST" id="check-action" class="sync-action" style="display: inline-block">
+              {{ csrf_field() }}
+              <button type="submit" class="btn btn-success">
+                  <span>{{ __('origam_portal.generic.check') }}</span>
+              </button>
+          </form>
+        @endif
+        @if ($pageData->is_synced)
+          <form action="{{ route('portal.synchronization.syncStart', $pageData->id) }}" method="POST" id="start-action" class="sync-action" style="display: inline-block">
+              {{ csrf_field() }}
+              <button type="submit" class="btn btn-success">
+                  <span>{{ __('origam_portal.generic.start') }}</span>
+              </button>
+          </form>
+        @endif
         @include('voyager::alerts')
         <div class="progress hidden">
           <div class="progress-bar progress-bar-striped active progress-bar-info" role="progressbar" style="width: 100%"></div>
         </div>
 
-        <div class="row">
+        <div class="row content-result">
             <div class="col-md-12">
               @if ($data)
                 @if(isset($data['data']))
-                  <h2>Data</h2>
-                  <div>
+                  <h2 class="page-subtitle">Fetched Data</h2>
+                  <textarea id="json-result-data" class="resizable-editor" data-editor="json" name="data_result">
                     {{ $data['data'] }}
+                  </textarea>
+                  <div style="padding-top: 15px">
+                    <a href="{{ route('portal.synchronization.create', $pageData->id) }}" class="btn btn-success btn-add-new">
+                        <i class="voyager-plus"></i> <span>{{ __('voyager.generic.add_new') }}</span>
+                    </a>
                   </div>
-                  <a href="{{ route('portal.synchronization.create', $pageData->id) }}" class="btn btn-success btn-add-new">
-                      <i class="voyager-plus"></i> <span>{{ __('voyager.generic.add_new') }}</span>
-                  </a>
                 @endif
                 @if(isset($data['error']))
-                  <h2>Error</h2>
-                  <div>
-                    {{ $data['error'] }}
-                  </div>
+                  <h2 class="page-subtitle">Error</h2>
+                  <pre>{{ $data['error'] }}</pre>
                 @endif
                 @if(isset($data['result']))
-                  <h2>Result</h2>
-                  <div>
-                    {{ $data['result'] }}
+                  <h2 class="page-subtitle">Result</h2>
+                  <div class="panel-body">
+                    <pre>{{ $data['result'] }}</pre>
                   </div>
                 @endif
               @endif
-
-                {{-- <table class="table table-striped database-tables">
-                    <thead>
-                        <tr>
-                            <th>{{ __('voyager.database.table_name') }}</th>
-                            <th>{{ __('voyager.database.bread_crud_actions') }}</th>
-                            <th style="text-align:right">{{ __('voyager.database.table_actions') }}</th>
-                        </tr>
-                    </thead>
-
-            @foreach($tables as $table)
-                    @continue(in_array($table->name, config('voyager.database.tables.hidden', [])))
-                    <tr>
-                        <td>
-                            <p class="name">
-                                <a href="{{ route('voyager.database.show', $table->name) }}"
-                                   data-name="{{ $table->name }}" class="desctable">
-                                   {{ $table->name }}
-                                </a>
-                            @if($table->dataTypeId)
-                                <i class="voyager-bread"
-                                   style="font-size:25px; position:absolute; margin-left:10px; margin-top:-3px;"></i>
-                            @endif
-                            </p>
-                        </td>
-
-                        <td>
-                            <div class="bread_actions">
-                            @if($table->dataTypeId)
-                                <a href="{{ route('voyager.' . $table->slug . '.index') }}"
-                                   class="btn-sm btn-warning browse_bread">
-                                    <i class="voyager-plus"></i> {{ __('voyager.database.browse_bread') }}
-                                </a>
-                                <a href="{{ route('voyager.database.bread.edit', $table->name) }}"
-                                   class="btn-sm btn-default edit">
-                                   {{ __('voyager.database.edit_bread') }}
-                                </a>
-                                <div data-id="{{ $table->dataTypeId }}" data-name="{{ $table->name }}"
-                                     class="btn-sm btn-danger delete" style="display:inline">
-                                     {{ __('voyager.database.delete_bread') }}
-                                </div>
-                            @else
-                                <a href="{{ route('voyager.database.bread.create', ['name' => $table->name]) }}"
-                                   class="btn-sm btn-default">
-                                    <i class="voyager-plus"></i> {{ __('voyager.database.add_bread') }}
-                                </a>
-                            @endif
-                            </div>
-                        </td>
-
-                        <td class="actions">
-                            <a class="btn btn-danger btn-sm pull-right delete_table @if($table->dataTypeId) remove-bread-warning @endif"
-                               data-table="{{ $table->name }}" style="display:inline; cursor:pointer;">
-                               <i class="voyager-trash"></i> {{ __('voyager.generic.delete') }}
-                            </a>
-                            <a href="{{ route('voyager.database.edit', $table->name) }}"
-                               class="btn btn-sm btn-primary pull-right" style="display:inline; margin-right:10px;">
-                               <i class="voyager-edit"></i> {{ __('voyager.generic.edit') }}
-                            </a>
-                            <a href="{{ route('voyager.database.show', $table->name) }}"
-                               data-name="{{ $table->name }}"
-                               class="btn btn-sm btn-warning pull-right desctable" style="display:inline; margin-right:10px;">
-                               <i class="voyager-eye"></i> {{ __('voyager.generic.view') }}
-                            </a>
-                        </td>
-                    </tr>
-                @endforeach
-                </table>
-            </div> --}}
         </div>
     </div>
 
@@ -222,12 +152,52 @@
 @section('javascript')
 
     <script>
+        $(function() {
+          $('textarea[data-editor]').each(function () {
+              var textarea = $(this),
+              mode = textarea.data('editor'),
+              editDiv = $('<div>').insertBefore(textarea),
+              editor = ace.edit(editDiv[0]),
+              _session = editor.getSession(),
+              valid = false;
+              textarea.hide();
+
+              // Use workers only when needed
+              editor.on('focus', function () {
+                  _session.setUseWorker(true);
+              });
+              editor.on('blur', function () {
+                  if (valid) {
+                      textarea.siblings('.validation-error').hide();
+                      _session.setUseWorker(false);
+                  } else {
+                      textarea.siblings('.validation-error').show();
+                  }
+              });
+
+              _session.setUseWorker(false);
+
+              editor.setAutoScrollEditorIntoView(true);
+              editor.$blockScrolling = Infinity;
+              editor.setOption("maxLines", 30);
+              editor.setOption("minLines", 4);
+              editor.setOption("showLineNumbers", false);
+              editor.setTheme("ace/theme/github");
+              _session.setMode("ace/mode/json");
+              if (textarea.val()) {
+                  _session.setValue(JSON.stringify(JSON.parse(textarea.val()), null, 4));
+              }
+              _session.setMode("ace/mode/" + mode);
+
+          });
+        });
         var form = document.querySelector('form.sync-action');
         var btn = form.querySelector('button[type="submit"]');
         btn.addEventListener('click', function(ev){
             if (form.checkValidity()) {
                 form.className = 'hidden';
                 document.querySelector('.progress.hidden').className = 'progress';
+                document.querySelector('.content-result').className = 'hidden';
             } else {
                 ev.preventDefault();
             }

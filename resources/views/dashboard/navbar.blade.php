@@ -33,15 +33,27 @@
         </div>
         <ul class="nav navbar-nav navbar-right">
             <li class="dropdown notifications">
-                <a href="#" class="dropdown-toggle text-right" data-toggle="dropdown" role="button" aria-expanded="false">
-                    <i class="voyager-mail"> </i>
-                    <span class="btn btn-sm btn-success number pull-right">2</span>
-                </a>
+                @php
+                  $msgs = app('App\Http\Controllers\Portal\NotificationController')->getNotifications();
+                  $msgsNo = app('App\Http\Controllers\Portal\NotificationController')->getNotificationsNumber($msgs);
+                @endphp
+                @if (isset($msgsNo) && $msgsNo > 0)
+                  <a href="#" class="dropdown-toggle text-right" data-toggle="dropdown" role="button" aria-expanded="false">
+                      <i class="voyager-mail"> </i>
+                      <span class="btn btn-sm btn-success number pull-right">{{$msgsNo}}</span>
+                  </a>
+                @endif
                 <ul class="dropdown-menu dropdown-menu-animated">
-                    <?php dd($msgs); ?>
-                    {{-- @foreach ($iterable as $key => $value)
-
-                    @endforeach --}}
+                    @foreach ($msgs as $wq => $rows)
+                      @foreach ($rows as $row)
+                        <li>
+                            <a href="{{route('portal.notifications.showMsg', ['slug' => $wq, 'uuid' => $row->uuid])}}">
+                                <i class="voyager-mail">&nbsp;</i>
+                                <span>{{$row->Subject}}</span>
+                            </a>
+                        </li>
+                      @endforeach
+                    @endforeach
                 </ul>
             </li>
             <li class="dropdown profile">

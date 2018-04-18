@@ -25,6 +25,19 @@
   font-weight: 700;
 }
 
+.navbar-nav li.notifications ul.dropdown-menu {
+  padding: 5px;
+}
+
+.navbar-nav li.notifications ul.dropdown-menu li a {
+  line-height: 1;
+  padding-bottom: 0;
+}
+
+.navbar-nav li.notifications ul.dropdown-menu li a i {
+  top: 7px;
+}
+
 .btn-failed {
   background: #FA2A00;
 }
@@ -39,5 +52,16 @@
 
 .btn-in-progress {
   background: #22A7F0;
+}
+
+.page-subtitle {
+  display: inline-block;
+  font-size: 18px;
+  line-height: 43px;
+  margin-top: 3px;
+  color: #555;
+  position: relative;
+  font-weight: 700;
+  margin-right: 20px;
 }
 

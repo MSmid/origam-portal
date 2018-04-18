@@ -9,10 +9,13 @@
           <span class="btn btn-warning"><i class="glyphicon glyphicon-ok"></i></span>
         @else
           <a href="{{ route('portal.notifications.mark', ['slug' => $datatableSlug, 'uuid' => $uuid]) }}" class="btn btn-warning">
-              <span class="glyphicon glyphicon-ok"></span>&nbsp;
-              {{ __('origam_portal.generic.mark_as_read') }}
+              <i class="glyphicon glyphicon-ok"></i>&nbsp;
+              <span>{{ __('origam_portal.generic.mark_as_read') }}</span>
           </a>
         @endif
+        <a href="{{ route('voyager.dashboard') }}" class="btn btn-primary">
+            <i class="voyager-angle-left"></i> <span>{{ __('origam_portal.generic.back') }}</span>
+        </a>
     </h1>
     @include('voyager::multilingual.language-selector')
 @stop
