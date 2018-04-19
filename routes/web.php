@@ -20,23 +20,10 @@ Route::group(['prefix' => config('origam_portal.portal.domain')], function () {
 
     Route::get('login', ['uses' => 'Portal\LoginController@login', 'as' => 'login']);
     Route::post('login', ['uses' => 'Portal\LoginController@postLogin', 'as' => 'postLogin']);
-    // Route::post('logout', ['uses' => 'Portal\VoyagerController@logout',  'as' => 'logout']);
+
+    // Route::get('/', ['uses' => 'Portal\VoyagerController@index',   'as' => 'dashboard']);
 
     Route::group(['as' => 'portal.'], function () {
-      //Synced Tables
-      // try {
-      //     foreach (DataType::all() as $dataType) {
-      //         $breadController = $dataType->controller
-      //                          ? $dataType->controller
-      //                          : $namespacePrefix.'VoyagerBreadController';
-      //
-      //         Route::resource($dataType->slug, $breadController);
-      //     }
-      // } catch (\InvalidArgumentException $e) {
-      //     throw new \InvalidArgumentException("Custom routes hasn't been configured because: ".$e->getMessage(), 1);
-      // } catch (\Exception $e) {
-      //     // do nothing, might just be because table not yet migrated.
-      // }
       // Synchronization
       Route::group([
         'as' => 'synchronization.',
