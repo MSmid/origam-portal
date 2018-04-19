@@ -187,12 +187,17 @@
                                                   {{ __('origam_portal.database.create_new_sync') }}
                                               </a>
                                             @endif
-                                            @if ($data->is_synced)
+                                            @if ($data->is_synced && $data->is_workqueue == false)
                                               <a href="{{ route('portal.synchronization.sync', $data->{$data->getKeyName()}) }}" class="btn btn-success"><i class="voyager-plus"></i>
                                                   {{ __('origam_portal.generic.sync_now') }}
                                               </a>
                                             @endif
-                                            @if (isset($data->table_name))
+                                            @if ($data->is_synced && $data->is_workqueue == true)
+                                              <a href="{{ '#not-available' }}" class="btn btn-success"><i class="voyager-plus"></i>
+                                                  {{ __('origam_portal.generic.add_scheduler') }}
+                                              </a>
+                                            @endif
+                                            @if (isset($data->table_name) && $data->is_workqueue == false)
                                               <a href="{{ route('voyager.' . str_replace('_', '-', $data->table_name) . '.index') }}" class="btn btn-success"><i class="voyager-plus"></i>
                                                   {{ __('origam_portal.generic.show_data') }}
                                               </a>

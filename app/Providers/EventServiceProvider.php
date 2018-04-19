@@ -24,6 +24,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         'App\Events\SyncFailed' => [
           'App\Listeners\SyncUpdateFail'
+        ],
+        'App\Events\PortalBreadAdded' => [
+          'App\Listeners\AddBreadMenuItem'
         ]
     ];
 

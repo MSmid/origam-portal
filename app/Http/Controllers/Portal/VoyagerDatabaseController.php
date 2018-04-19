@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Portal;
 
 use App\DataSource;
 use App\Notification;
+use App\Events\PortalBreadAdded;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -91,6 +92,27 @@ class VoyagerDatabaseController extends BaseVoyagerDatabaseController
              ->with($this->alertSuccess(__('voyager.database.success_create_table', ['table' => $table->name])));
       } catch (Exception $e) {
           return back()->with($this->alertException($e))->withInput();
+      }
+  }
+
+  public function storeBread(Request $request)
+  {
+      Voyager::canOrFail('browse_database');
+
+      try {
+          $dataType = Voyager::model('DataType');
+          $res = $dataType->updateDataType($request->all(), true);
+          $data = $res
+              ? $this->alertSuccess(__('voyager.database.success_created_bread'))
+              : $this->alertError(__('voyager.database.error_creating_bread'));
+          if ($res) {
+              // event(new BreadAdded($dataType, $data));
+              event(new PortalBreadAdded($dataType, $data));
+          }
+
+          return redirect()->route('voyager.database.index')->with($data);
+      } catch (Exception $e) {
+          return redirect()->route('voyager.database.index')->with($this->alertException($e, 'Saving Failed'));
       }
   }
 

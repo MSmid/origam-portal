@@ -37,12 +37,12 @@
                   $msgs = app('App\Http\Controllers\Portal\NotificationController')->getNotifications();
                   $msgsNo = app('App\Http\Controllers\Portal\NotificationController')->getNotificationsNumber($msgs);
                 @endphp
-                @if (isset($msgsNo) && $msgsNo > 0)
-                  <a href="#" class="dropdown-toggle text-right" data-toggle="dropdown" role="button" aria-expanded="false">
-                      <i class="voyager-mail"> </i>
-                      <span class="btn btn-sm btn-success number pull-right">{{$msgsNo}}</span>
-                  </a>
-                @endif
+                <a href="#" class="dropdown-toggle text-right" data-toggle="dropdown" role="button" aria-expanded="false">
+                    <i class="voyager-mail"> </i>
+                    @if (isset($msgsNo) && $msgsNo > 0)
+                    <span class="btn btn-sm btn-success number pull-right">{{$msgsNo}}</span>
+                    @endif
+                </a>
                 <ul class="dropdown-menu dropdown-menu-animated">
                     @foreach ($msgs as $wq => $rows)
                       @foreach ($rows as $row)

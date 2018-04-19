@@ -18,6 +18,7 @@ return [
         'mark_as_read' => 'Mark as Read',
         'back' => 'Back',
         'show_data' => 'Show Data',
+        'add_scheduler' => 'Add Scheduler',
 
         'action'                 => 'Action',
         'actions'                => 'Actions',

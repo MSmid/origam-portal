@@ -36,7 +36,7 @@ class VoyagerBreadController extends BaseVoyagerBreadController
         $displayName = count($ids) > 1 ? $dataType->display_name_plural : $dataType->display_name_singular;
 
         $res = $data->destroy($ids);
-        $this->dropSyncTable($data->value('entity_name'));
+        $this->dropSyncTable($data->value('table_name'));
 
         $data = $res
             ? [

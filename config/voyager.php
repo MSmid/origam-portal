@@ -106,7 +106,7 @@ return [
     |
     */
 
-    'prefix' => 'admin',
+    'prefix' => 'portal',
 
     /*
     |--------------------------------------------------------------------------
@@ -184,7 +184,7 @@ return [
     */
 
     // When a BREAD is added, create the Menu item using the BREAD properties.
-    'add_bread_menu_item' => false,
+    'add_bread_menu_item' => true,
 
     // When a BREAD is added, create the related Permission.
     'add_bread_permission' => true,
@@ -200,7 +200,7 @@ return [
 
     'primary_color' => '#f15b47',
 
-    'show_dev_tips' => true, // Show development tip "How To Use:" in Menu and Settings
+    'show_dev_tips' => false, // Show development tip "How To Use:" in Menu and Settings
 
     // Here you can specify additional assets you would like to be included in the master.blade
     'additional_css' => [
