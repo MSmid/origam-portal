@@ -23,6 +23,20 @@ Route::group(['prefix' => config('origam_portal.portal.domain')], function () {
     // Route::post('logout', ['uses' => 'Portal\VoyagerController@logout',  'as' => 'logout']);
 
     Route::group(['as' => 'portal.'], function () {
+      //Synced Tables
+      // try {
+      //     foreach (DataType::all() as $dataType) {
+      //         $breadController = $dataType->controller
+      //                          ? $dataType->controller
+      //                          : $namespacePrefix.'VoyagerBreadController';
+      //
+      //         Route::resource($dataType->slug, $breadController);
+      //     }
+      // } catch (\InvalidArgumentException $e) {
+      //     throw new \InvalidArgumentException("Custom routes hasn't been configured because: ".$e->getMessage(), 1);
+      // } catch (\Exception $e) {
+      //     // do nothing, might just be because table not yet migrated.
+      // }
       // Synchronization
       Route::group([
         'as' => 'synchronization.',
@@ -44,11 +58,12 @@ Route::group(['prefix' => config('origam_portal.portal.domain')], function () {
         'as' => 'notifications.',
         'prefix' => 'notifications'
       ], function(){
-        Route::get('/', ['uses' => 'Portal\NotificationController@index', 'as' => 'index']);
-        // Route::get('{slug}', ['uses' => 'Portal\NotificationController@showNotifications', 'as' => 'show']);
+        Route::get('{slug}', ['uses' => 'Portal\NotificationController@showNotifications', 'as' => 'show']);
         Route::get('{slug}/{uuid}', ['uses' => 'Portal\NotificationController@showNotificationMessage', 'as' => 'showMsg']);
         Route::get('{slug}/{uuid}/mark', ['uses' => 'Portal\NotificationController@markAsRead', 'as' => 'mark']);
       });
+      //Log
+      Route::get('log', ['uses' => 'Portal\PortalLogController@index', 'as' => 'index']);
     });
 
 });

@@ -93,15 +93,15 @@ class SynchronizationDatabaseController extends VoyagerDatabaseController
   public function syncStart($id) {
 
     event(new SyncStarted($id));
-    
+
     $ds = DataSource::where('id', $id);
     $data = $this->sync($ds->value('url'), $id);
     //get model by entity_name
-    $table = $ds->value('entity_name');
+    $table = $ds->value('table_name');
     if (!isset($data['error'])) {
       //sync strategy:
       //1) add only new rows by uuid
-      $this->databaseSyncAdd($table, $data['data']);
+      $this->databaseSyncAdd($table, $ds->value('entity_name') ,$data['data']);
       //2) delete rows not present in $data by uuid
       //$this->databaseSyncDelete($table, $data['data']);
       //3) update the values of rows with same uuid
@@ -114,7 +114,7 @@ class SynchronizationDatabaseController extends VoyagerDatabaseController
     return $this->renderView('sync.sync', $id, $data);
   }
 
-  public function databaseSyncAdd($table, $rawData) {
+  public function databaseSyncAdd($table, $entity, $rawData) {
     $data = json_decode($rawData, true);
     DB::table($table)->truncate();
     //skip ROOT if present
@@ -122,8 +122,8 @@ class SynchronizationDatabaseController extends VoyagerDatabaseController
       $data = $data['ROOT'];
     }
     //skip entity
-    if(isset($data[$table])) {
-      $data = $data[$table];
+    if(isset($data[$entity])) {
+      $data = $data[$entity];
     }
     //loop over dataset, rename id to uuid
     foreach ($data as $row) {
