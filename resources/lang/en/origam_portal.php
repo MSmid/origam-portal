@@ -17,6 +17,7 @@ return [
         'start' => 'Start',
         'mark_as_read' => 'Mark as Read',
         'back' => 'Back',
+        'show_data' => 'Show Data',
 
         'action'                 => 'Action',
         'actions'                => 'Actions',

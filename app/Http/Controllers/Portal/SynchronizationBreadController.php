@@ -88,7 +88,8 @@ class SynchronizationBreadController extends BaseVoyagerBreadController
             'orderBy',
             'sortOrder',
             'searchable',
-            'isServerSide'
+            'isServerSide',
+            'slug'
         ));
     }
 

@@ -12,7 +12,6 @@
 @stop
 
 @section('content')
-
     <div class="page-content container-fluid">
         <div class="row">
             <div id="dbManager" class="col-md-12">

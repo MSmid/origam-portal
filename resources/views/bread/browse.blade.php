@@ -74,9 +74,7 @@
                                             @endif
                                         </th>
                                         @endforeach
-                                        <th class="actions">{{ __('origam_portal.generic.sync_status') }}</th>
                                         <th class="actions">{{ __('voyager.generic.actions') }}</th>
-                                        <th class="actions">CRUD</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -177,28 +175,6 @@
                                             </td>
                                         @endforeach
                                         <td class="no-sort no-click" id="bread-actions">
-                                          <a href="#" title="{{ __('origam_portal.generic.status') }}" class="btn btn-sm btn-{{ $data->status }} pull-right">
-                                              <i class="voyager-data"></i> <span class="hidden-xs hidden-sm"> </span>
-                                          </a>
-                                        </td>
-                                        <td class="no-sort no-click" id="bread-actions">
-                                            @if (!$data->is_synced)
-                                              <a href="{{ route('portal.synchronization.sync', $data->{$data->getKeyName()}) }}" class="btn btn-success"><i class="voyager-plus"></i>
-                                                  {{ __('origam_portal.database.create_new_sync') }}
-                                              </a>
-                                            @endif
-                                            @if ($data->is_synced)
-                                              <a href="{{ route('portal.synchronization.sync', $data->{$data->getKeyName()}) }}" class="btn btn-success"><i class="voyager-plus"></i>
-                                                  {{ __('origam_portal.generic.sync_now') }}
-                                              </a>
-                                            @endif
-                                            @if (isset($data->table_name))
-                                              <a href="{{ route('voyager.' . str_replace('_', '-', $data->table_name) . '.index') }}" class="btn btn-success"><i class="voyager-plus"></i>
-                                                  {{ __('origam_portal.generic.show_data') }}
-                                              </a>
-                                            @endif
-                                        </td>
-                                        <td class="no-sort no-click" id="bread-actions">
                                             @can('delete', $data)
                                                 <a href="javascript:;" title="{{ __('voyager.generic.delete') }}" class="btn btn-sm btn-danger pull-right delete" data-id="{{ $data->{$data->getKeyName()} }}" id="delete-{{ $data->{$data->getKeyName()} }}">
                                                     <i class="voyager-trash"></i> <span class="hidden-xs hidden-sm">{{ __('voyager.generic.delete') }}</span>
@@ -210,10 +186,13 @@
                                                 </a>
                                             @endcan
                                             @can('read', $data)
-                                                <a href="{{ route('voyager.'.$dataType->slug.'.show', $data->{$data->getKeyName()}) }}" title="{{ __('voyager.generic.view') }}" class="btn btn-sm btn-warning pull-right">
+                                                <a href="{{ route('voyager.'.$dataType->slug.'.show', $data->{$data->getKeyName()}) }}" title="{{ __('voyager.generic.view') }}" class="btn btn-sm btn-warning pull-right edit">
                                                     <i class="voyager-eye"></i> <span class="hidden-xs hidden-sm">{{ __('voyager.generic.view') }}</span>
                                                 </a>
                                             @endcan
+                                            <a href="#not-available" title="Open in Origam" class="btn btn-sm btn-warning pull-right">
+                                                <i class="voyager-eye"></i> <span class="hidden-xs hidden-sm">Origam</span>
+                                            </a>
                                         </td>
                                     </tr>
                                     @endforeach
