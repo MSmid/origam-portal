@@ -25,5 +25,7 @@ class DataSource extends Model
       return ($status ? $status : 'none');
     }
 
-
+    public function users() {
+      return $this->belongsToMany(User::class, 'user_dashboard_settings');
+    }
 }

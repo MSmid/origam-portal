@@ -26,4 +26,9 @@ class User extends \TCG\Voyager\Models\User
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+
+    public function dataSources() {
+      return $this->belongsToMany(DataSource::class, 'user_dashboard_settings');
+    }
 }

@@ -60,12 +60,20 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 9);
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
 /******/ })
 /************************************************************************/
-/******/ ({
+/******/ ([
+/* 0 */
+/***/ (function(module, exports, __webpack_require__) {
 
-/***/ 10:
+__webpack_require__(1);
+__webpack_require__(3);
+module.exports = __webpack_require__(4);
+
+
+/***/ }),
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -75,7 +83,7 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-__webpack_require__(11);
+__webpack_require__(2);
 
 // window.Vue = require('vue');
 
@@ -92,11 +100,9 @@ __webpack_require__(11);
 // });
 
 /***/ }),
+/* 2 */
+/***/ (function(module, exports) {
 
-/***/ 11:
-/***/ (function(module, __webpack_exports__) {
-
-"use strict";
 
 // window._ = require('lodash');
 
@@ -153,29 +159,16 @@ __webpack_require__(11);
 // });
 
 /***/ }),
-
-/***/ 42:
+/* 3 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-
-/***/ 43:
+/* 4 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
-
-/***/ }),
-
-/***/ 9:
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(10);
-__webpack_require__(42);
-module.exports = __webpack_require__(43);
-
 
 /***/ })
-
-/******/ });
+/******/ ]);

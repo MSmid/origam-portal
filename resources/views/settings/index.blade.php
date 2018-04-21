@@ -345,7 +345,7 @@
         </form>
 
         <div style="clear:both"></div>
-        
+
         @can('add', Voyager::model('Setting'))
         <div class="panel" style="margin-top:10px;">
             <div class="panel-heading new-setting">

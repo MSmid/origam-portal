@@ -2,19 +2,33 @@
 
 @section('content')
     <div class="page-content">
-        <h1>My dashboard {{$test}}</h1>
+        <h1>My dashboard</h1>
+        <div style="background: rgba(255,0,0,0.1)">
+          {!! Form::select('supplier', $ds, null, ['class' => 'form-control']) !!}
+        </div>
+        @if (isset($user_ds))
+            <div style="background: rgba(255,0,0,0.1)">
+              {!! Form::select('supplier', $user_ds, null, ['class' => 'form-control']) !!}
+            </div>
+        @endif
+        @foreach ($user_ds as $row)
+          <div class="col-sm-4">
+            @widget('dashboardWidget', ['count' => $row->count, 'string' => $row->name, 'icon_class' => $row->iconClass, 'url' => $row->table_name])
+          </div>
+        @endforeach
+        @widget('dashboardWidget', ['count' => '', 'string' => 'Test', 'icon_class' => 'voyager-mail', 'url' => '#mailLogin'])
         @include('voyager::alerts')
-        @include('voyager::dimmers')
+        {{-- @include('voyager::dimmers') --}}
         <div class="analytics-container">
             <?php $google_analytics_client_id = Voyager::setting("admin.google_analytics_client_id"); ?>
             @if (isset($google_analytics_client_id) && !empty($google_analytics_client_id))
                 {{-- Google Analytics Embed --}}
                 <div id="embed-api-auth-container"></div>
             @else
-                <p style="border-radius:4px; padding:20px; background:#fff; margin:0; color:#999; text-align:center;">
+                {{-- <p style="border-radius:4px; padding:20px; background:#fff; margin:0; color:#999; text-align:center;">
                     {!! __('voyager.analytics.no_client_id') !!}
                     <a href="https://console.developers.google.com" target="_blank">https://console.developers.google.com</a>
-                </p>
+                </p> --}}
             @endif
 
             <div class="Dashboard Dashboard--full" id="analytics-dashboard">
