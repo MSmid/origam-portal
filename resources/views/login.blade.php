@@ -64,7 +64,7 @@
                 <form action="{{ route('login') }}" method="POST">
                     {{ csrf_field() }}
                     <div class="form-group form-group-default" id="emailGroup">
-                        <label>{{ __('voyager.generic.email') }}</label>
+                        <label>{{ __('origam_portal.generic.login') }}</label>
                         <div class="controls">
                             <input type="text" name="login" id="login" value="{{ old('login') }}" placeholder="{{ __('voyager.generic.email') }}" class="form-control" required>
                          </div>

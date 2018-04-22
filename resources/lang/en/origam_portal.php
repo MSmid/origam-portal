@@ -19,6 +19,7 @@ return [
         'back' => 'Back',
         'show_data' => 'Show Data',
         'add_scheduler' => 'Add Scheduler',
+        'login' => 'Login',
 
         'action'                 => 'Action',
         'actions'                => 'Actions',
