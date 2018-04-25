@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="page-content">
-        <h1>My dashboard</h1>
+        {{-- <h1>My dashboard</h1>
         <div style="background: rgba(255,0,0,0.1)">
           {!! Form::select('supplier', $ds, null, ['class' => 'form-control']) !!}
         </div>
@@ -16,9 +16,9 @@
             @widget('dashboardWidget', ['count' => $row->count, 'string' => $row->name, 'icon_class' => $row->iconClass, 'url' => $row->table_name])
           </div>
         @endforeach
-        @widget('dashboardWidget', ['count' => '', 'string' => 'Test', 'icon_class' => 'voyager-mail', 'url' => '#mailLogin'])
+        @widget('dashboardWidget', ['count' => '', 'string' => 'Test', 'icon_class' => 'voyager-mail', 'url' => '#mailLogin']) --}}
         @include('voyager::alerts')
-        {{-- @include('voyager::dimmers') --}}
+        @include('voyager::dimmers')
         <div class="analytics-container">
             <?php $google_analytics_client_id = Voyager::setting("admin.google_analytics_client_id"); ?>
             @if (isset($google_analytics_client_id) && !empty($google_analytics_client_id))

@@ -31,21 +31,26 @@ use TCG\Voyager\Http\Controllers\VoyagerDatabaseController as BaseVoyagerDatabas
 class VoyagerDatabaseController extends BaseVoyagerDatabaseController
 {
 
+  /**
+   * Store new database table.
+   *
+   * @param \Illuminate\Http\Request $request
+   *
+   * @return \Illuminate\Http\RedirectResponse
+   */
   public function store(Request $request)
   {
       Voyager::canOrFail('browse_database');
 
       try {
           $table = $request->table;
-          //If it's datatable for notification work queue, there few more steps
-          //to be done: prefix table name, create notification and add foreign keys
+          //If it's datatable for notification work queue, there are few more steps
           if (isset($request->is_workqueue) && $request->is_workqueue == 'on') {
-              //prefix
+              //add prefix
               $table = json_decode($request->table, true);
               $table['name'] = 'wq_' .$table['name'];
               //update DS entity_name
               $ds = DataSource::where('id', $request->ds_id);
-              // $ds->update(['entity_name' => $table['name']]);
               //insert new notification
               $nid = DB::table('notifications')->insertGetId(
                 ['name' => $ds->value('name'), 'data_source_id' => $request->ds_id, 'slug_datatable_name' => $table['name']]
@@ -53,7 +58,7 @@ class VoyagerDatabaseController extends BaseVoyagerDatabaseController
               //Add foreing keys on notificaiton id and user id, is_read flag, subject
               $table = $this->addWqFields($table);
           }
-          // dd(json_decode($table, true));
+
           Type::registerCustomPlatformTypes();
 
           $table = Table::make($table);
@@ -65,15 +70,12 @@ class VoyagerDatabaseController extends BaseVoyagerDatabaseController
                   'name' => $modelNamespace.Str::studly(Str::singular($table->name)),
               ];
 
-              // if (in_array('deleted_at', $request->input('field.*'))) {
-              //     $params['--softdelete'] = true;
-              // }
-
               if (isset($request->create_migration) && $request->create_migration == 'on') {
                   $params['--migration'] = true;
               }
 
               Artisan::call('voyager:make:model', $params);
+
           } elseif (isset($request->create_migration) && $request->create_migration == 'on') {
               Artisan::call('make:migration', [
                   'name'    => 'create_'.$table->name.'_table',
@@ -94,7 +96,13 @@ class VoyagerDatabaseController extends BaseVoyagerDatabaseController
           return back()->with($this->alertException($e))->withInput();
       }
   }
-
+  /**
+   * Store BREAD data type and rows for given database table.
+   *
+   * @param \Illuminate\Http\Request $request
+   *
+   * @return \Illuminate\Http\RedirectResponse
+   */
   public function storeBread(Request $request)
   {
       Voyager::canOrFail('browse_database');
@@ -106,7 +114,6 @@ class VoyagerDatabaseController extends BaseVoyagerDatabaseController
               ? $this->alertSuccess(__('voyager.database.success_created_bread'))
               : $this->alertError(__('voyager.database.error_creating_bread'));
           if ($res) {
-              // event(new BreadAdded($dataType, $data));
               event(new PortalBreadAdded($dataType, $data));
           }
 
@@ -116,6 +123,15 @@ class VoyagerDatabaseController extends BaseVoyagerDatabaseController
       }
   }
 
+  /**
+   * Update data source model and redirect after creating table.
+   *
+   * @param $id
+   * @param $tableName
+   * @param $isWq
+   *
+   * @return \Illuminate\Http\RedirectResponse
+   */
   public function updateDataSourceAndRedirect($id, $tableName, $isWq) {
     DataSource::where('id', $id)->update(['is_synced' => true]);
     DataSource::where('id', $id)->update(['table_name' => $tableName]);
@@ -127,6 +143,13 @@ class VoyagerDatabaseController extends BaseVoyagerDatabaseController
        ->with($this->alertSuccess(__('origam_portal.database.success_create_sync', ['table' => $tableName, 'dsname' => DataSource::where('id', $id)->value('name')])));
   }
 
+  /**
+   * Add specific mandatory fields for workqueue data table.
+   *
+   * @param $table
+   *
+   * @return Array $table
+   */
   public function addWqFields($table) {
     array_push(
       $table['columns'], [
@@ -146,7 +169,13 @@ class VoyagerDatabaseController extends BaseVoyagerDatabaseController
         'notnull' => true,
         'default' => null
       ]);
-    array_push($table['indexes'], ['columns' => ['notification_id'], 'type' => 'INDEX', 'name' => '', 'table' => 'Notifications']);
+    array_push(
+      $table['indexes'], [
+        'columns' => ['notification_id'],
+        'type' => 'INDEX',
+        'name' => '',
+        'table' => 'Notifications'
+      ]);
     array_push(
       $table['columns'], [
         'name' => 'is_read',

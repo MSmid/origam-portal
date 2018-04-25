@@ -18,30 +18,34 @@ use TCG\Voyager\Database\Schema\Identifier;
 use TCG\Voyager\Database\Schema\SchemaManager;
 use TCG\Voyager\Database\Schema\Table;
 use TCG\Voyager\Database\Types\Type;
-use TCG\Voyager\Events\BreadAdded;
-use TCG\Voyager\Events\BreadDeleted;
-use TCG\Voyager\Events\BreadUpdated;
-use TCG\Voyager\Events\TableAdded;
-use TCG\Voyager\Events\TableDeleted;
-use TCG\Voyager\Events\TableUpdated;
 use TCG\Voyager\Facades\Voyager;
-use TCG\Voyager\Models\DataRow;
-use TCG\Voyager\Models\DataType;
-use TCG\Voyager\Models\Permission;
 
 class SynchronizationDatabaseController extends VoyagerDatabaseController
 {
 
-  public function showSync(Request $request, $id) {
-    return $this->renderView('sync.sync', $id, null);
-  }
-
+  /**
+   * Method retrieves URL and check its availability by calling sync method.
+   * Result is redirected to synchronization workflow view.
+   *
+   * @param \Illuminate\Http\Request $request
+   * @param $id data source id
+   *
+   * @return \Illuminate\Http\RedirectResponse
+   */
   public function postCheck(Request $request, $id) {
     $url = DataSource::where('id', $id)->value('url');
     $data = $this->sync($url, $id);
     return $this->renderView('sync.sync', $id, $data);
   }
 
+  /**
+   * Method used for making GET calls on given URL.
+   *
+   * @param $url API endpoint for making the GET
+   * @param $id data source id
+   *
+   * @return $output Array holding output data
+   */
   public function sync($url, $id) {
     $client = new Client();
     $path = env('ORIGAM_BASE_URL') . '/' . $url;
@@ -63,33 +67,13 @@ class SynchronizationDatabaseController extends VoyagerDatabaseController
     return $output;
   }
 
-  public function renderView($view, $id, $data) {
-    $pageData = DataSource::query()->where('id', $id)->getQuery()->get()[0];
-    return view($view, compact('pageData', 'data'));
-  }
-
-  public function storeSyncData($id, $rawData) {
-    $data = json_decode($rawData, true);
-    $data = $data['ROOT'];
-    foreach($data as $row => $value) {
-      if (count($value) > 0) {
-        $data[$row] = $value[0];
-        break;
-      }
-      $data = $data;
-      break;
-    }
-    $data = json_encode($data);
-    $this->storeEntityName($id, $data);
-    DataSource::where('id', $id)->update(['sync_data' => $data]);
-  }
-
-  public function storeEntityName($id, $rawData) {
-    $data = json_decode($rawData, true);
-    $entityName = $this->getSyncDataEntityName($data);
-    DataSource::where('id', $id)->update(['entity_name' => $entityName]);
-  }
-
+  /**
+   * Method used for starting actual synchronization.
+   *
+   * @param $id data source id
+   *
+   * @return \Illuminate\Http\RedirectResponse
+   */
   public function syncStart($id) {
 
     event(new SyncStarted($id));
@@ -100,12 +84,9 @@ class SynchronizationDatabaseController extends VoyagerDatabaseController
     $table = $ds->value('table_name');
     if (!isset($data['error'])) {
       //sync strategy:
-      //1) add only new rows by uuid
+      $this->databaseSyncDelete($table, $data['data']);
       $this->databaseSyncAdd($table, $ds->value('entity_name') ,$data['data']);
-      //2) delete rows not present in $data by uuid
-      //$this->databaseSyncDelete($table, $data['data']);
-      //3) update the values of rows with same uuid
-      //$this->databaseSyncUpdate($table, $data['data']);
+      $this->databaseSyncUpdate($table, $data['data']);
     } else {
       event(new SyncFailed($id, $data['error']));
     }
@@ -114,6 +95,27 @@ class SynchronizationDatabaseController extends VoyagerDatabaseController
     return $this->renderView('sync.sync', $id, $data);
   }
 
+  /**
+   * Method deleting rows which are not present in data retrieved from API
+   *
+   * @param $table name of the data table
+   * @param $data
+   *
+   */
+  public function databaseSyncDelete($table, $data) {
+    //TODO
+  }
+
+  /**
+   * Method adding rows to data table.
+   * NOTE As far as prototype is concerned, syncing is simplified to truncating
+   * data table and populating with data from Origam API.
+   *
+   * @param $table name of the data table
+   * @param $entity name of the entity to parse data from
+   * @param $data data retrieved from API
+   *
+   */
   public function databaseSyncAdd($table, $entity, $rawData) {
     $data = json_decode($rawData, true);
     DB::table($table)->truncate();
@@ -138,7 +140,18 @@ class SynchronizationDatabaseController extends VoyagerDatabaseController
   }
 
   /**
-   * Create database table.
+   * Method for updating rows on matching UUID keys
+   *
+   * @param $table name of the data table
+   * @param $data
+   *
+   */
+  public function databaseSyncUpdate($table, $data) {
+    //TODO
+  }
+
+  /**
+   * Create database table by inicializing and displaying DB Manager.
    *
    * @return \Illuminate\Http\RedirectResponse
    */
@@ -152,6 +165,15 @@ class SynchronizationDatabaseController extends VoyagerDatabaseController
       return Voyager::view('database.edit-add', compact('db'));
   }
 
+  /**
+   * Override method for inicializatin and population of DB manager user interface.
+   *
+   * @param $action
+   * @param $table
+   * @param $prefillData
+   *
+   * @return $db dataset required by DB Manager
+   */
   protected function prepareDbManager($action, $table = '', $prefillData = '')
   {
       $prefill = json_decode($prefillData, true);
@@ -202,6 +224,73 @@ class SynchronizationDatabaseController extends VoyagerDatabaseController
       $db->platform = SchemaManager::getDatabasePlatform()->getName();
 
       return $db;
+  }
+
+  /**
+   * Helper method for storing processed data from Origam API
+   *
+   * @param $id data source id
+   * @param $rawData data retrieved from Origam API
+   *
+   */
+  public function storeSyncData($id, $rawData) {
+    $data = json_decode($rawData, true);
+    //ORIGAM
+    if (isset($data['ROOT'])) {
+      $data = $data['ROOT'];
+      foreach($data as $row => $value) {
+        if (count($value) > 0) {
+          $data[$row] = $value[0];
+          break;
+        }
+        $data = $data;
+        break;
+      }
+      $data = json_encode($data);
+      $this->storeEntityName($id, $data);
+      DataSource::where('id', $id)->update(['sync_data' => $data]);
+    }
+  }
+
+  /**
+   * Helper method for storing entity name which represents
+   * entity to be sync with.
+   *
+   * @param $id data source id
+   * @param $rawData data retrieved from Origam API
+   *
+   */
+  public function storeEntityName($id, $rawData) {
+    $data = json_decode($rawData, true);
+    $entityName = $this->getSyncDataEntityName($data);
+    DataSource::where('id', $id)->update(['entity_name' => $entityName]);
+  }
+
+  /**
+   * Helper method for displaying synchronization workflow view
+   *
+   * @param \Illuminate\Http\Request $request
+   * @param $id data source id
+   *
+   * @return \Illuminate\Http\RedirectResponse
+   */
+  public function showSync(Request $request, $id) {
+    return $this->renderView('sync.sync', $id, null);
+  }
+
+  /**
+   * Helper method returning synchronization view populated with data from
+   * relevant data source table.
+   *
+   * @param $view name of the view
+   * @param $id data source id
+   * @param $data data to display
+   *
+   * @return \Illuminate\Http\RedirectResponse
+   */
+  public function renderView($view, $id, $data) {
+    $pageData = DataSource::query()->where('id', $id)->getQuery()->get()[0];
+    return view($view, compact('pageData', 'data'));
   }
 
   public function getSyncDataEntityName($data) {

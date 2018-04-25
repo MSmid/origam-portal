@@ -10,6 +10,13 @@ use TCG\Voyager\Http\Controllers\VoyagerBreadController as BaseVoyagerBreadContr
 
 class SynchronizationBreadController extends BaseVoyagerBreadController
 {
+    /**
+     * Index method displaying data sources in custom BREAD interface table
+     *
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function index(Request $request)
     {
         // GET THE SLUG, ex. 'posts', 'pages', etc.
@@ -72,12 +79,6 @@ class SynchronizationBreadController extends BaseVoyagerBreadController
         // Check if server side pagination is enabled
         $isServerSide = isset($dataType->server_side) && $dataType->server_side;
 
-        // $view = 'voyager::bread.browse';
-        //
-        // if (view()->exists("voyager::$slug.browse")) {
-        //     $view = "voyager::$slug.browse";
-        // }
-
         $view = 'sync.browse';
 
         return Voyager::view($view, compact(
@@ -93,6 +94,13 @@ class SynchronizationBreadController extends BaseVoyagerBreadController
         ));
     }
 
+    /**
+     * Override the method and preset the slug to data_sources table
+     *
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return String
+     */
     public function getSlug(Request $request)
     {
         return 'data_sources';

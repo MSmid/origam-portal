@@ -15,6 +15,12 @@ class LoginController extends BaseVoyagerAuthController
 {
   use AuthenticatesUsers;
 
+  /** Override
+   * Index method displaying login view or app based on fact if user is already
+   * authenticated.
+   *
+   * @return \Illuminate\Http\RedirectResponse
+   */
   public function login()
   {
       if (Auth::user()) {
@@ -24,6 +30,14 @@ class LoginController extends BaseVoyagerAuthController
       return view('login');
   }
 
+  /** Override
+   * Method dealing with login form POST action. It attempts to authenticate user
+   * in Origam and then in Laravel Auth impelementation.
+   *
+   * @param \Illuminate\Http\Request $request
+   *
+   * @return \Illuminate\Http\RedirectResponse
+   */
   public function postLogin(Request $request)
   {
       $this->validateLogin($request);
@@ -59,9 +73,17 @@ class LoginController extends BaseVoyagerAuthController
         $this->incrementLoginAttempts($request);
 
         return $this->sendFailedLoginResponse($request);
-      }      
+      }
   }
 
+  /** Override
+   * Method used for authenticating user with Origam. If it is succesfull, it
+   * returns Origam token cookie.
+   *
+   * @param \Illuminate\Http\Request $request
+   *
+   * @return Symfony\Component\HttpFoundation\Cookie
+   */
   public function origamLogin(Request $request)
   {
     $username = $request->input($this->username());
@@ -79,9 +101,19 @@ class LoginController extends BaseVoyagerAuthController
     if (strlen($res->getHeaders()["Set-Cookie"][0]) > 52) {
       $lifetime = 60 * 24 * 365 * 2; //function requires lifetime in minutes, set to two years
       return cookie('4isp', $res->getHeaders()["Set-Cookie"][0], $lifetime);
+    } else {
+      return null;
     }
   }
 
+  /** Override
+   * Method is used for authenticate user in Laravel and chain Origam cookie.
+   *
+   * @param \Illuminate\Http\Request $request
+   * @param $cookie
+   *
+   * @return Symfony\Component\HttpFoundation\Cookie
+   */
   public function sendLoginResponse(Request $request, $cookie = null)
   {
       $request->session()->regenerate();
@@ -92,16 +124,37 @@ class LoginController extends BaseVoyagerAuthController
               ?: redirect()->intended($this->redirectPath())->withCookie($cookie);
   }
 
+  /** Override
+   * Method for retrieving credentials from Request object.
+   *
+   * @param \Illuminate\Http\Request $request
+   *
+   * @return Object holding credentials
+   */
   public function credentials(Request $request)
   {
     return $request->only($this->username(), 'password');
   }
 
+  /** Override
+   * This method define which column is used as username. It can be email,
+   * login, username, whatever.
+   *
+   * @return String
+   */
   public function username()
   {
       return 'login';
   }
 
+  /** Override
+   * Logout destroys session and set logout of user. Then redirect to root
+   * (login view)
+   *
+   * @param \Illuminate\Http\Request $request
+   *
+   * @return \Illuminate\Http\RedirectResponse
+   */
   public function logout(Request $request)
   {
       $this->guard()->logout();

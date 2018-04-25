@@ -12,6 +12,14 @@ use TCG\Voyager\Http\Controllers\VoyagerCompassController as BaseVoyagerCompassC
 
 class PortalLogController extends VoyagerCompassController
 {
+
+  /** Override
+   * Index method displaying logs
+   *
+   * @param \Illuminate\Http\Request $request
+   *
+   * @return \Illuminate\Http\RedirectResponse
+   */
   public function index(Request $request)
   {
       // Check permission
@@ -70,9 +78,6 @@ class PortalLogController extends VoyagerCompassController
 
               $artisan_output = $process->getOutput();
 
-              //$artisan_output = exec('cd ' . base_path() . ' && php artisan ' . $command . $args);
-              // Artisan::call($command . $args);
-              // $artisan_output = Artisan::output();
           } catch (Exception $e) {
               $artisan_output = $e->getMessage();
           }
@@ -84,9 +89,6 @@ class PortalLogController extends VoyagerCompassController
       $logs = LogViewer::all();
       $files = LogViewer::getFiles(true);
       $current_file = LogViewer::getFileName();
-
-      // get the full list of artisan commands and store the output
-      // $commands = $this->getArtisanCommands();
 
       return view('log.index', compact('logs', 'files', 'current_file', 'active_tab', 'commands', 'artisan_output'))->with($message);
   }
