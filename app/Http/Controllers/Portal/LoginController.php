@@ -48,7 +48,7 @@ class LoginController extends BaseVoyagerAuthController
           return $this->sendLockoutResponse($request);
       }
 
-      if (env('ORIGAM_DISABLE_AUTH')) {
+      if (!env('ORIGAM_DISABLE_AUTH')) {
         $cookie = $this->origamLogin($request);
 
         if($cookie) {
@@ -65,7 +65,7 @@ class LoginController extends BaseVoyagerAuthController
         return $this->sendFailedLoginResponse($request);
       } else {
         $credentials = $this->credentials($request);
-
+        // dd($request);
         if ($this->guard()->attempt($credentials, $request->has('remember'))) {
             return $this->sendLoginResponse($request);
         }

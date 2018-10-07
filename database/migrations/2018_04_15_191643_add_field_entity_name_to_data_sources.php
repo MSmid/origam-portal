@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddFieldToDataSources extends Migration
+class AddFieldEntityNameToDataSources extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class AddFieldToDataSources extends Migration
     public function up()
     {
         Schema::table('data_sources', function (Blueprint $table) {
-            $table->boolean('is_synced')->default(false);
+            $table->string('entity_name', 50)->nullable();
         });
     }
 
@@ -26,7 +26,7 @@ class AddFieldToDataSources extends Migration
     public function down()
     {
         Schema::table('data_sources', function (Blueprint $table) {
-            $table->dropColumn('is_synced');
+            $table->dropColumn('entity_name');
         });
     }
 }
